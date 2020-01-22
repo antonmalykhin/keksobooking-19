@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
-* Студент: [Антон Малыхин](https://up.htmlacademy.ru/javascript/19/user/1074531).
-* Наставник: `Неизвестно`.
+- Студент: [Антон Малыхин](https://up.htmlacademy.ru/javascript/19/user/1074531).
+- Наставник: [Антон Попов](https://htmlacademy.ru/profile/joker).
 
 ---
 
