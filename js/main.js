@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  * Функция поиска случайного числа в заданном интервале. Если задан 1 аргумент, функция * возвращает случайное число от 0 до переданного значения аргумента
  * @param {number} minNumber - минимальное значение
@@ -16,7 +15,6 @@ var getRandomNumberFromInterval = function (minNumber, maxNumber) {
   maxNumber = typeof maxNumber !== 'undefined' ? maxNumber : 1000;
   return arguments.length > 1 ? Math.round(minNumber - 0.5 + Math.random() * (maxNumber - minNumber + 1)) : Math.round(Math.random() * minNumber);
 };
-
 
 /**
  * Функция поиска случайного значения массива
@@ -43,7 +41,7 @@ var getRandomValueFromArray = function (values) {
 var getRandomArray = function (array) {
   var newArray = [];
 
-  for (var i = 0; i <= getRandomNumberFromInterval(array.length); i++) {
+  for (var i = 0; i <= array.length; i++) {
     var item = array[getRandomNumberFromInterval(array.length - 1)];
     if (!newArray.includes(item)) {
       newArray.push(item);
@@ -52,23 +50,22 @@ var getRandomArray = function (array) {
   return newArray;
 };
 
-
-var map = document.querySelector('.map');
-
 /**
  * Функция генерации массива объектов объявлений
  * @param {number} objectsCounter - количество генерируемых объектов
  * @return {array}
  */
 var getAdvertsData = function (objectsCounter) {
-  var array = [];
+  var adverts = [];
 
   for (var i = 1; i <= objectsCounter; i++) {
     var obj = {};
+    var xPosition = getRandomNumberFromInterval(55, map.clientWidth - 55);
+    var yPosition = getRandomNumberFromInterval(130, 630);
     obj.author = {'avatar': 'img/avatars/user0' + i + '.png'};
     obj.offer = {
-      'title': 'заголовок предложения',
-      'address': getRandomNumberFromInterval(map.clientWidth, map.clientHeight) + ', ' + getRandomNumberFromInterval(130, 630),
+      'title': 'Заголовок предложения',
+      'address': xPosition + ', ' + yPosition,
       'price': getRandomNumberFromInterval(),
       'type': getRandomValueFromArray(['palace', 'flat', 'house', 'bungalo']),
       'rooms': getRandomNumberFromInterval(10),
@@ -79,17 +76,37 @@ var getAdvertsData = function (objectsCounter) {
       'description': 'строка с описанием',
       'photos': getRandomArray(['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg']),
     };
+
     obj.location = {
-      'x': getRandomNumberFromInterval(map.clientWidth, map.clientHeight),
-      'y': getRandomNumberFromInterval(130, 630)
+      'x': xPosition,
+      'y': yPosition
     };
-    array.push(obj);
+    adverts.push(obj);
   }
 
-  return array;
+  return adverts;
 };
 
+var map = document.querySelector('.map');
+map.classList.remove('map--faded');
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var fragment = document.createDocumentFragment();
+var mapPins = map.querySelector('.map__pins');
 
-var x = getAdvertsData(8);
+/**
+ * Функция рисует маркеры объявления из из массива объектов объявлений
+ * @param {*} adverts - Массив объектов объявлений
+ */
+var renderMapPins = function (adverts) {
+  adverts.forEach(function (advert) {
+    var pin = pinTemplate.cloneNode(true);
+    var avatar = pin.querySelector('img');
+    pin.style = 'left: ' + advert.location.x + 'px; top: ' + advert.location.y + 'px;';
+    avatar.src = advert.author.avatar;
+    avatar.alt = advert.offer.title;
+    fragment.appendChild(pin);
+  });
+  mapPins.appendChild(fragment);
+};
 
-console.dir(x);
+renderMapPins(getAdvertsData(8));
