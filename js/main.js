@@ -66,7 +66,7 @@ var getAdvertsData = function (objectsCounter) {
     obj.offer = {
       'title': 'Заголовок предложения',
       'address': xPosition + ', ' + yPosition,
-      'price': getRandomNumberFromInterval(),
+      'price': getRandomNumberFromInterval(10000),
       'type': getRandomValueFromArray(['palace', 'flat', 'house', 'bungalo']),
       'rooms': getRandomNumberFromInterval(10),
       'guests': getRandomNumberFromInterval(10),
@@ -90,7 +90,7 @@ var getAdvertsData = function (objectsCounter) {
 var map = document.querySelector('.map');
 map.classList.remove('map--faded');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var fragment = document.createDocumentFragment();
+
 var mapPins = map.querySelector('.map__pins');
 
 /**
@@ -98,6 +98,7 @@ var mapPins = map.querySelector('.map__pins');
  * @param {*} adverts - Массив объектов объявлений
  */
 var renderMapPins = function (adverts) {
+  var fragment = document.createDocumentFragment();
   adverts.forEach(function (advert) {
     var pin = pinTemplate.cloneNode(true);
     var avatar = pin.querySelector('img');
@@ -109,4 +110,42 @@ var renderMapPins = function (adverts) {
   mapPins.appendChild(fragment);
 };
 
-renderMapPins(getAdvertsData(8));
+var addvertsData = getAdvertsData(8);
+renderMapPins(addvertsData);
+
+var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+
+var renderCard = function (adverts) {
+  var fragment = document.createDocumentFragment();
+  var card = cardTemplate.cloneNode(true);
+
+  adverts.forEach(function (advert) {
+    card.querySelector('.popup__avatar').innerText = advert.author.avatar;
+    card.querySelector('.popup__title').innerText = advert.offer.title;
+    card.querySelector('.popup__text--address').innerText = advert.offer.address;
+    card.querySelector('.popup__text--price').innerText = advert.offer.price + '₽/ночь';
+    card.querySelector('.popup__type').innerText = advert.offer.type;
+    card.querySelector('.popup__text--capacity').innerText = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
+    card.querySelector('.popup__text--time').innerText = 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
+    // card.querySelector('.popup__features').querySelectorAll('.popup__feature').forEach(function (feature) {
+    //   feature.classList.contains('popup__feature--' + advert.offer.feature) ? console.log('ok') : console.log('no');
+    // // });
+    // var ul = document.createElement('ul');
+    // ul.classList.add('popup__features');
+    // advert.offer.features.forEach(function (feature) {
+    //   var li = document.createElement('li');
+    //   li.classList.add('popup__feature');
+    //   li.classList.add('popup__feature--' + feature);
+    //   ul.appendChild(li);
+    // });
+    // card.appendChild(ul);
+
+    fragment.appendChild(card);
+  });
+  mapPins.appendChild(fragment);
+};
+
+
+renderCard(addvertsData);
+
+
