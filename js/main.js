@@ -1,5 +1,25 @@
 'use strict';
 
+var LEFT_MOUSE_BUTTON = 0;
+var ENTER = 'Enter';
+var TEMP_DATA = {
+  advertTitle: 'Заголовок предложения',
+  maxPrice: 10000,
+  roomsQuantity: 10,
+  guestsQuantity: 10,
+  description: 'строка с описанием',
+  hostTypes: ['palace', 'flat', 'house', 'bungalo'],
+  timePeriods: ['12:00', '13:00', '14:00'],
+  features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
+  photos: ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'],
+  y: {
+    min: 130,
+    max: 630
+  }
+};
+
+var PIN_WIDTH = 50;
+
 /**
  * Функция поиска случайного числа в заданном интервале. Если задан 1 аргумент, функция * возвращает случайное число от 0 до переданного значения аргумента
  * @param {number} minNumber - минимальное значение
@@ -52,34 +72,34 @@ var getRandomArray = function (array) {
 
 /**
  * Функция генерации массива объектов объявлений
- * @param {number} objectsCounter - количество генерируемых объектов
+ * @param {number} advertQuantity - количество генерируемых объектов
  * @return {array}
  */
-var getAdvertsData = function (objectsCounter) {
+var getAdvertsData = function (advertQuantity) {
   var adverts = [];
 
-  for (var i = 1; i <= objectsCounter; i++) {
+  for (var i = 1; i <= advertQuantity; i++) {
     var obj = {};
-    var xPosition = getRandomNumber(55, map.clientWidth - 55);
-    var yPosition = getRandomNumber(130, 630);
-    obj.author = {'avatar': 'img/avatars/user0' + i + '.png'};
+    var xPosition = getRandomNumber(PIN_WIDTH / 2, map.clientWidth - PIN_WIDTH / 2);
+    var yPosition = getRandomNumber(TEMP_DATA.y.min, TEMP_DATA.y.max);
+    obj.author = {avatar: 'img/avatars/user0' + i + '.png'};
     obj.offer = {
-      'title': 'Заголовок предложения',
-      'address': xPosition + ', ' + yPosition,
-      'price': getRandomNumber(10000),
-      'type': getRandomValueFromArray(['palace', 'flat', 'house', 'bungalo']),
-      'rooms': getRandomNumber(10),
-      'guests': getRandomNumber(10),
-      'checkin': getRandomValueFromArray(['12:00', '13:00', '14:00']),
-      'checkout': getRandomValueFromArray(['12:00', '13:00', '14:00']),
-      'features': getRandomArray(['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner']),
-      'description': 'строка с описанием',
-      'photos': getRandomArray(['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg']),
+      title: TEMP_DATA.advertTitle,
+      address: xPosition + ', ' + yPosition,
+      price: getRandomNumber(TEMP_DATA.maxPrice),
+      type: getRandomValueFromArray(TEMP_DATA.hostTypes),
+      rooms: getRandomNumber(TEMP_DATA.roomsQuantity),
+      guests: getRandomNumber(TEMP_DATA.guestsQuantity),
+      checkin: getRandomValueFromArray(TEMP_DATA.timePeriods),
+      checkout: getRandomValueFromArray(TEMP_DATA.timePeriods),
+      features: getRandomArray(TEMP_DATA.features),
+      description: TEMP_DATA.description,
+      photos: getRandomArray(TEMP_DATA.photos),
     };
 
     obj.location = {
-      'x': xPosition,
-      'y': yPosition
+      x: xPosition,
+      y: yPosition
     };
     adverts.push(obj);
   }
@@ -88,10 +108,47 @@ var getAdvertsData = function (objectsCounter) {
 };
 
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+var mapPins = map.querySelector('.map__pins');
+var mainPin = map.querySelector('.map__pin--main');
+
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
-var mapPins = map.querySelector('.map__pins');
+var advertForm = document.querySelector('.ad-form');
+var addressField = advertForm.querySelector('#address');
+var checkinField = advertForm.querySelector('#timein');
+var checkoutField = advertForm.querySelector('#timeout');
+
+checkinField.addEventListener('change', function () {
+  checkoutField.value = checkinField.value;
+});
+
+checkoutField.addEventListener('change', function () {
+  checkinField.value = checkoutField.value;
+});
+
+addressField.value = (mainPin.offsetTop + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetLeft + mainPin.scrollHeight);
+
+
+var activate = function () {
+  map.classList.remove('map--faded');
+  advertForm.classList.remove('ad-form--disabled');
+};
+
+var onMainPinClick = function (evt) {
+  if (evt.button === LEFT_MOUSE_BUTTON) {
+    activate();
+  }
+};
+
+var onMainPinEnterPress = function (evt) {
+  if (evt.key === ENTER) {
+    activate();
+  }
+};
+
+mainPin.addEventListener('mousedown', onMainPinClick);
+
+mainPin.addEventListener('keydown', onMainPinEnterPress);
 
 /**
  * Функция рисует маркеры объявления из из массива объектов объявлений
@@ -156,7 +213,7 @@ var renderCard = function (advert) {
 };
 
 var advertsData = getAdvertsData(8);
-renderMapPins(advertsData);
-renderCard(advertsData[3]);
+// renderMapPins(advertsData);
+// renderCard(advertsData[3]);
 
 
