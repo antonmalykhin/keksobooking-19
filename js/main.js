@@ -1,23 +1,99 @@
 'use strict';
 
+/**
+ * Клик по левой кнопке мыши
+ * @constant
+ * @type {number}
+ */
 var LEFT_MOUSE_BUTTON = 0;
+
+/**
+ * Кнопка Enter на клавиатуре
+ * @constant
+ * @type {string}
+ */
 var ENTER = 'Enter';
+
+
 var TEMP_DATA = {
+  /**
+   * Заголовок объявления
+   * @constant
+   * @type {string}
+   */
   advertTitle: 'Заголовок предложения',
+
+  /**
+   * Максимальная цена
+   * @constant
+   * @type {number}
+   */
   maxPrice: 10000,
+
+  /**
+   * Количесво комнат
+   * @constant
+   * @type {number}
+   */
   roomsQuantity: 10,
+
+  /**
+   * Количесво гостей
+   * @constant
+   * @type {number}
+   */
   guestsQuantity: 10,
+
+  /**
+   * Описание объявления
+   * @constant
+   * @type {string}
+   */
   description: 'строка с описанием',
+
+  /**
+   * Типы жилья
+   * @constant
+   * @type {array}
+   */
   hostTypes: ['palace', 'flat', 'house', 'bungalo'],
+
+  /**
+   * Время
+   * @constant
+   * @type {array}
+   */
   timePeriods: ['12:00', '13:00', '14:00'],
+
+  /**
+   * Преимущества
+   * @constant
+   * @type {array}
+   */
   features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
+
+  /**
+   * Фотографии жилья
+   * @constant
+   * @type {array}
+   */
   photos: ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'],
+
+  /**
+   * Минимальное и максимальное значения положения маркера по оси Х
+   * @constant
+   */
   y: {
     min: 130,
     max: 630
   }
 };
 
+/**
+ * Ширина маркера
+ * @constant
+ * @type {number}
+ */
 var PIN_WIDTH = 50;
 
 /**
@@ -114,9 +190,86 @@ var mainPin = map.querySelector('.map__pin--main');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
 var advertForm = document.querySelector('.ad-form');
+var priceField = advertForm.querySelector('#price');
 var addressField = advertForm.querySelector('#address');
 var checkinField = advertForm.querySelector('#timein');
 var checkoutField = advertForm.querySelector('#timeout');
+var roomsField = advertForm.querySelector('#room_number');
+var capacityField = advertForm.querySelector('#capacity');
+var typeField = advertForm.querySelector('#type');
+
+
+/**
+ * Функция добавления атрибута минимального значения цены в зависимости от типа жилья
+ */
+var onTypeInputChange = function () {
+  var minPrice;
+
+  switch (typeField.value) {
+    case 'bungalo':
+      minPrice = 0;
+      break;
+    case 'flat':
+      minPrice = 1000;
+      break;
+    case 'house':
+      minPrice = 5000;
+      break;
+    case 'palace':
+      minPrice = 10000;
+      break;
+  }
+
+  priceField.setAttribute('min', minPrice);
+};
+
+typeField.addEventListener('change', onTypeInputChange);
+
+/**
+ * Функция добавления атрибута disabled option
+ * @param {*} select - select
+ */
+var makeDisableOptions = function (select) {
+  for (var i = 0; i < select.options.length; i++) {
+    select.options[i].setAttribute('disabled', '');
+  }
+};
+
+/**
+ * Функция удаления атрибута disabled
+ * @param {*} select - select
+ * @param {*} value - значение
+ */
+var makeEnableOptions = function (select, value) {
+  for (var i = value - 1; i >= 0; i--) {
+    select.options[2 - i].removeAttribute('disabled');
+  }
+};
+
+/**
+ * Функция синхронизации полей количества комнат и количества гостей
+ */
+var onRoomsInputClick = function () {
+  makeDisableOptions(capacityField);
+  switch (roomsField.value) {
+    case '1':
+      makeEnableOptions(capacityField, roomsField.value);
+      break;
+    case '2':
+      makeEnableOptions(capacityField, roomsField.value);
+      break;
+    case '3':
+      makeEnableOptions(capacityField, roomsField.value);
+      break;
+    case '100':
+      capacityField.options[3].removeAttribute('disabled');
+      break;
+  }
+};
+
+capacityField.options[2].setAttribute('selected', '');
+
+roomsField.addEventListener('click', onRoomsInputClick);
 
 checkinField.addEventListener('change', function () {
   checkoutField.value = checkinField.value;
@@ -128,18 +281,28 @@ checkoutField.addEventListener('change', function () {
 
 addressField.value = (mainPin.offsetTop + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetLeft + mainPin.scrollHeight);
 
-
+/**
+ * Функция активации карты и формы
+ */
 var activate = function () {
   map.classList.remove('map--faded');
   advertForm.classList.remove('ad-form--disabled');
 };
 
+/**
+ * Функция нажатия на главный маркер левой кнопкой мыши
+ * @param {*} evt - Event
+ */
 var onMainPinClick = function (evt) {
   if (evt.button === LEFT_MOUSE_BUTTON) {
     activate();
   }
 };
 
+/**
+ * Функция нажатия на главный маркер клавишей Enter
+ * @param {*} evt - Event
+ */
 var onMainPinEnterPress = function (evt) {
   if (evt.key === ENTER) {
     activate();
@@ -213,7 +376,7 @@ var renderCard = function (advert) {
 };
 
 var advertsData = getAdvertsData(8);
-// renderMapPins(advertsData);
-// renderCard(advertsData[3]);
+renderMapPins(advertsData);
+renderCard(advertsData[3]);
 
 
