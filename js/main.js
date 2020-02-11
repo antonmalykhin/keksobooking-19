@@ -364,7 +364,6 @@ var renderMapPins = function (adverts) {
  */
 var renderCard = function (advert) {
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
-  // var fragment = document.createDocumentFragment();
 
   var card = cardTemplate.cloneNode(true);
 
@@ -380,24 +379,28 @@ var renderCard = function (advert) {
   var featuresList = card.querySelector('.popup__features');
   var features = featuresList.querySelectorAll('.popup__feature');
 
-  // TODO ПОДУМАТЬ КАК СДЕЛАТЬ ИНАЧЕ
   features.forEach(function (feature) {
-    if (!(advert.offer.features.includes(feature.classList[1].split('--')[1]))) {
-      featuresList.removeChild(feature);
-    }
+    var f = featuresList.removeChild(feature);
+    advert.offer.features.forEach(function (offerFeature) {
+      if (f.classList.value.includes(offerFeature)) {
+        featuresList.appendChild(f);
+      }
+    });
   });
 
-  // TODO ЕСЛИ НЕТ ФОТОГРАФИЙ...
   var photos = card.querySelector('.popup__photos');
-  var photo = photos.removeChild(photos.querySelector('.popup__photo'));
 
-  advert.offer.photos.forEach(function (photoItem) {
-    var photoCopy = photo.cloneNode();
-    photoCopy.src = photoItem;
-    photos.appendChild(photoCopy);
-  });
-
-  card.appendChild(photos);
+  if (advert.offer.photos) {
+    var photo = photos.removeChild(photos.querySelector('.popup__photo'));
+    advert.offer.photos.forEach(function (photoItem) {
+      var photoCopy = photo.cloneNode();
+      photoCopy.src = photoItem;
+      photos.appendChild(photoCopy);
+    });
+    card.appendChild(photos);
+  } else {
+    card.removeChild(photos);
+  }
 
   map.insertBefore(card, map.querySelector('.map__filters-container'));
 };
