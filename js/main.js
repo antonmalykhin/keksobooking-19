@@ -347,13 +347,16 @@ mainPin.addEventListener('keydown', onMainPinEnterPress);
  */
 var renderMapPins = function (adverts) {
   var fragment = document.createDocumentFragment();
-  adverts.forEach(function (advert) {
+  adverts.forEach(function (advert, i) {
     var pin = pinTemplate.cloneNode(true);
     var avatar = pin.querySelector('img');
     pin.style = 'left: ' + advert.location.x + 'px; top: ' + advert.location.y + 'px;';
     avatar.src = advert.author.avatar;
     avatar.alt = advert.offer.title;
     fragment.appendChild(pin);
+    pin.addEventListener('click', function () {
+      renderCard(adverts[i]);
+    });
   });
   mapPins.appendChild(fragment);
 };
@@ -407,6 +410,5 @@ var renderCard = function (advert) {
 
 var advertsData = getAdvertsData(8);
 renderMapPins(advertsData);
-renderCard(advertsData[3]);
 
 
