@@ -8,11 +8,14 @@
 var LEFT_MOUSE_BUTTON = 0;
 
 /**
- * Кнопка Enter на клавиатуре
+ * Кнопки клавиатуры
  * @constant
- * @type {string}
+ * @type {*}
  */
-var ENTER = 'Enter';
+var keys = {
+  ENTER: 'Enter',
+  ESC: 'Escape'
+};
 
 /**
  * Типы жилья
@@ -132,19 +135,19 @@ var MIN_PRICES = {
 var rooms = {
   1: {
     ROOM_VALUE: 1,
-    DISABLED_CAPACITY: [0, 1, 3]
+    ENABLED_CAPACITY: [2]
   },
   2: {
     ROOM_VALUE: 2,
-    DISABLED_CAPACITY: [0, 3]
+    ENABLED_CAPACITY: [1, 2]
   },
   3: {
     ROOM_VALUE: 3,
-    DISABLED_CAPACITY: [3]
+    ENABLED_CAPACITY: [0, 1, 2]
   },
   100: {
     ROOM_VALUE: 0,
-    DISABLED_CAPACITY: [0, 1, 2]
+    ENABLED_CAPACITY: [3]
   }
 };
 
@@ -245,6 +248,12 @@ var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pi
 
 var advertForm = document.querySelector('.ad-form');
 
+var formFields = advertForm.querySelectorAll('fieldset');
+
+formFields.forEach(function (field) {
+  field.disabled = true;
+});
+
 var advertFields = {
   priceField: advertForm.querySelector('#price'),
   addressField: advertForm.querySelector('#address'),
@@ -260,6 +269,7 @@ var advertFields = {
 //  */
 var onTypeInputChange = function (evt) {
   advertFields.priceField.setAttribute('min', MIN_PRICES[evt.target.value]);
+  advertFields.priceField.setAttribute('placeholder', MIN_PRICES[evt.target.value]);
 };
 
 advertFields.typeField.addEventListener('change', onTypeInputChange);
@@ -271,18 +281,18 @@ advertFields.typeField.addEventListener('change', onTypeInputChange);
 var onRoomFieldClick = function (evt) {
 
   advertFields.capacityField.querySelectorAll('option').forEach(function (option) {
-    option.disabled = false;
+    option.disabled = true;
   });
 
   advertFields.capacityField.value = advertFields.roomsField.value;
-  rooms[evt.target.value].DISABLED_CAPACITY.forEach(function (capacity) {
-    advertFields.capacityField.options.item(capacity).disabled = true;
+  rooms[evt.target.value].ENABLED_CAPACITY.forEach(function (capacity) {
+    advertFields.capacityField.options.item(capacity).disabled = false;
   });
 
   advertFields.capacityField.value = rooms[evt.target.value].ROOM_VALUE;
 };
 
-advertFields.roomsField.addEventListener('click', onRoomFieldClick);
+advertFields.roomsField.addEventListener('mouseup', onRoomFieldClick);
 
 advertFields.checkinField.addEventListener('change', function () {
   advertFields.checkoutField.value = advertFields.checkinField.value;
@@ -291,9 +301,6 @@ advertFields.checkinField.addEventListener('change', function () {
 advertFields.checkoutField.addEventListener('change', function () {
   advertFields.checkinField.value = advertFields.checkoutField.value;
 });
-
-advertFields.addressField.value = (mainPin.offsetTop + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetLeft + mainPin.scrollHeight);
-
 
 /**
  * Функция активации полей формы объявления
@@ -304,6 +311,8 @@ var activateForm = function () {
   });
 
   advertFields.capacityField.value = advertFields.roomsField.value;
+  advertFields.priceField.setAttribute('placeholder', MIN_PRICES[advertFields.typeField.value]);
+  advertFields.addressField.value = (mainPin.offsetTop + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetLeft + mainPin.scrollHeight);
 };
 
 /**
@@ -317,6 +326,8 @@ var activatePage = function () {
   activateForm();
 };
 
+var advertsData = getAdvertsData(8);
+
 /**
  * Функция нажатия на главный маркер левой кнопкой мыши
  * @param {*} evt - Event
@@ -324,6 +335,7 @@ var activatePage = function () {
 var onMainPinClick = function (evt) {
   if (evt.button === LEFT_MOUSE_BUTTON) {
     activatePage();
+    renderMapPins(advertsData);
   }
 };
 
@@ -332,8 +344,9 @@ var onMainPinClick = function (evt) {
  * @param {*} evt - Event
  */
 var onMainPinEnterPress = function (evt) {
-  if (evt.key === ENTER) {
+  if (evt.key === keys.ENTER) {
     activatePage();
+    renderMapPins(advertsData);
   }
 };
 
@@ -347,7 +360,7 @@ mainPin.addEventListener('keydown', onMainPinEnterPress);
  */
 var renderMapPins = function (adverts) {
   var fragment = document.createDocumentFragment();
-  adverts.forEach(function (advert, i) {
+  adverts.forEach(function (advert) {
     var pin = pinTemplate.cloneNode(true);
     var avatar = pin.querySelector('img');
     pin.style = 'left: ' + advert.location.x + 'px; top: ' + advert.location.y + 'px;';
@@ -355,7 +368,7 @@ var renderMapPins = function (adverts) {
     avatar.alt = advert.offer.title;
     fragment.appendChild(pin);
     pin.addEventListener('click', function () {
-      renderCard(adverts[i]);
+      renderCard(advert);
     });
   });
   mapPins.appendChild(fragment);
@@ -383,10 +396,10 @@ var renderCard = function (advert) {
   var features = featuresList.querySelectorAll('.popup__feature');
 
   features.forEach(function (feature) {
-    var f = featuresList.removeChild(feature);
+    var featureItem = featuresList.removeChild(feature);
     advert.offer.features.forEach(function (offerFeature) {
-      if (f.classList.value.includes(offerFeature)) {
-        featuresList.appendChild(f);
+      if (featureItem.classList.value.includes(offerFeature)) {
+        featuresList.appendChild(featureItem);
       }
     });
   });
@@ -406,9 +419,31 @@ var renderCard = function (advert) {
   }
 
   map.insertBefore(card, map.querySelector('.map__filters-container'));
+
+  /**
+   * Функция скрытия карточки объявления
+   * @param {*} evt - Event
+   */
+  var onCloseCardBtnClick = function (evt) {
+    if (evt.target.type === 'button') {
+      map.removeChild(card);
+      card.removeEventListener('click', onCloseCardBtnClick);
+    }
+  };
+
+  /**
+   * Функция скрытия карточки объявления по нажатию ESC
+   * @param {*} evt - Event
+   */
+  var onEscapePress = function (evt) {
+    if (evt.key === keys.ESC) {
+      map.removeChild(card);
+      card.removeEventListener('click', onCloseCardBtnClick);
+      window.removeEventListener('keydown', onEscapePress);
+    }
+  };
+
+
+  card.addEventListener('click', onCloseCardBtnClick);
+  window.addEventListener('keydown', onEscapePress);
 };
-
-var advertsData = getAdvertsData(8);
-renderMapPins(advertsData);
-
-
