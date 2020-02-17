@@ -8,86 +8,102 @@
 var LEFT_MOUSE_BUTTON = 0;
 
 /**
- * Кнопка Enter на клавиатуре
+ * Кнопки клавиатуры
+ * @constant
+ * @type {*}
+ */
+var Keys = {
+  ENTER: 'Enter',
+  ESC: 'Escape'
+};
+
+/**
+ * Типы жилья
+ * @constant
+ * @type {array}
+ */
+var HOST_TYPES = [
+  'palace',
+  'flat',
+  'house',
+  'bungalo'
+];
+
+/**
+  * Преимущества
+  * @constant
+  * @type {array}
+  */
+var FEATURES = [
+  'wifi',
+  'dishwasher',
+  'parking',
+  'washer',
+  'elevator',
+  'conditioner'
+];
+
+/**
+ * Минимальное и максимальное значения положения маркера по оси Y
+ * @constant
+ */
+var PinPositionY = {
+  MIN: 130,
+  MAX: 630
+};
+
+/**
+ * Время
+ * @constant
+ * @type {array}
+ */
+var TIME_PERIODS = [
+  '12:00',
+  '13:00',
+  '14:00'
+];
+
+/**
+ * Заголовок объявления
  * @constant
  * @type {string}
  */
-var ENTER = 'Enter';
+var ADVERT_TITLE = 'Заголовок предложения';
 
+/**
+ * Максимальная цена
+ * @constant
+ * @type {number}
+ */
+var MAX_PRICE = 10000;
 
-var TEMP_DATA = {
-  /**
-   * Заголовок объявления
-   * @constant
-   * @type {string}
-   */
-  advertTitle: 'Заголовок предложения',
+/**
+ * Количесво комнат
+ * @constant
+ * @type {number}
+ */
+var ROOMS_QUANTITY = 10;
 
-  /**
-   * Максимальная цена
-   * @constant
-   * @type {number}
-   */
-  maxPrice: 10000,
+/**
+ * Количесво гостей
+ * @constant
+ * @type {number}
+ */
+var GUESTS_QUANTITY = 10;
 
-  /**
-   * Количесво комнат
-   * @constant
-   * @type {number}
-   */
-  roomsQuantity: 10,
+/**
+ * Описание объявления
+ * @constant
+ * @type {string}
+ */
+var DESCRIPTION = 'строка с описанием';
 
-  /**
-   * Количесво гостей
-   * @constant
-   * @type {number}
-   */
-  guestsQuantity: 10,
-
-  /**
-   * Описание объявления
-   * @constant
-   * @type {string}
-   */
-  description: 'строка с описанием',
-
-  /**
-   * Типы жилья
-   * @constant
-   * @type {array}
-   */
-  hostTypes: ['palace', 'flat', 'house', 'bungalo'],
-
-  /**
-   * Время
-   * @constant
-   * @type {array}
-   */
-  timePeriods: ['12:00', '13:00', '14:00'],
-
-  /**
-   * Преимущества
-   * @constant
-   * @type {array}
-   */
-  features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
-
-  /**
-   * Фотографии жилья
-   * @constant
-   * @type {array}
-   */
-  photos: ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'],
-
-  /**
-   * Минимальное и максимальное значения положения маркера по оси Х
-   * @constant
-   */
-  y: {
-    min: 130,
-    max: 630
-  }
-};
+/**
+ * Фотографии жилья
+ * @constant
+ * @type {array}
+ */
+var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
 /**
  * Ширина маркера
@@ -95,6 +111,45 @@ var TEMP_DATA = {
  * @type {number}
  */
 var PIN_WIDTH = 50;
+
+/**
+ * Минимальные цены жилья
+ * @constant
+ * @type {object}
+ */
+var MinPrices = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
+
+/**
+ * Комнаты
+ * @constant
+ * @type {object}
+ */
+var Rooms = {
+  1: 1,
+  2: 2,
+  3: 3,
+  100: 0
+};
+
+var map = document.querySelector('.map');
+var mapPins = map.querySelector('.map__pins');
+var mainPin = map.querySelector('.map__pin--main');
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var advertForm = document.querySelector('.ad-form');
+var formFields = advertForm.querySelectorAll('fieldset');
+var priceField = advertForm.querySelector('#price');
+var addressField = advertForm.querySelector('#address');
+var checkinField = advertForm.querySelector('#timein');
+var checkoutField = advertForm.querySelector('#timeout');
+var roomsField = advertForm.querySelector('#room_number');
+var capacityField = advertForm.querySelector('#capacity');
+var capacities = capacityField.querySelectorAll('option');
+var typeField = advertForm.querySelector('#type');
 
 /**
  * Функция поиска случайного числа в заданном интервале. Если задан 1 аргумент, функция * возвращает случайное число от 0 до переданного значения аргумента
@@ -147,146 +202,128 @@ var getRandomArray = function (array) {
 };
 
 /**
- * Функция генерации массива объектов объявлений
- * @param {number} advertQuantity - количество генерируемых объектов
+ * Функция генерации предложения
+ * @param {number} index
+ * @return {object}
+ *
+ */
+var getAdvertData = function (index) {
+
+  var advertData = {};
+
+  var xPosition = getRandomNumber(PIN_WIDTH / 2, map.clientWidth - PIN_WIDTH / 2);
+  var yPosition = getRandomNumber(PinPositionY.MIN, PinPositionY.MAX);
+  advertData.author = {avatar: 'img/avatars/user0' + (index + 1) + '.png'};
+  advertData.offer = {
+    title: ADVERT_TITLE,
+    address: xPosition + ', ' + yPosition,
+    price: getRandomNumber(MAX_PRICE),
+    type: getRandomValueFromArray(HOST_TYPES),
+    rooms: getRandomNumber(ROOMS_QUANTITY),
+    guests: getRandomNumber(GUESTS_QUANTITY),
+    checkin: getRandomValueFromArray(TIME_PERIODS),
+    checkout: getRandomValueFromArray(TIME_PERIODS),
+    features: getRandomArray(FEATURES),
+    description: DESCRIPTION,
+    photos: getRandomArray(PHOTOS),
+  };
+
+  advertData.location = {
+    x: xPosition,
+    y: yPosition
+  };
+
+  return advertData;
+};
+
+/**
+ *  Функуия генерации предложений
+ * @param {number} quantityAdverts - количество генерируемых предложений
  * @return {array}
  */
-var getAdvertsData = function (advertQuantity) {
+var generateAdverts = function (quantityAdverts) {
   var adverts = [];
-
-  for (var i = 1; i <= advertQuantity; i++) {
-    var obj = {};
-    var xPosition = getRandomNumber(PIN_WIDTH / 2, map.clientWidth - PIN_WIDTH / 2);
-    var yPosition = getRandomNumber(TEMP_DATA.y.min, TEMP_DATA.y.max);
-    obj.author = {avatar: 'img/avatars/user0' + i + '.png'};
-    obj.offer = {
-      title: TEMP_DATA.advertTitle,
-      address: xPosition + ', ' + yPosition,
-      price: getRandomNumber(TEMP_DATA.maxPrice),
-      type: getRandomValueFromArray(TEMP_DATA.hostTypes),
-      rooms: getRandomNumber(TEMP_DATA.roomsQuantity),
-      guests: getRandomNumber(TEMP_DATA.guestsQuantity),
-      checkin: getRandomValueFromArray(TEMP_DATA.timePeriods),
-      checkout: getRandomValueFromArray(TEMP_DATA.timePeriods),
-      features: getRandomArray(TEMP_DATA.features),
-      description: TEMP_DATA.description,
-      photos: getRandomArray(TEMP_DATA.photos),
-    };
-
-    obj.location = {
-      x: xPosition,
-      y: yPosition
-    };
-    adverts.push(obj);
+  for (var i = 0; i < quantityAdverts; i++) {
+    adverts.push(getAdvertData(i));
   }
-
   return adverts;
 };
 
-var map = document.querySelector('.map');
-var mapPins = map.querySelector('.map__pins');
-var mainPin = map.querySelector('.map__pin--main');
-
-var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-
-var advertForm = document.querySelector('.ad-form');
-var priceField = advertForm.querySelector('#price');
-var addressField = advertForm.querySelector('#address');
-var checkinField = advertForm.querySelector('#timein');
-var checkoutField = advertForm.querySelector('#timeout');
-var roomsField = advertForm.querySelector('#room_number');
-var capacityField = advertForm.querySelector('#capacity');
-var typeField = advertForm.querySelector('#type');
-
-
 /**
  * Функция добавления атрибута минимального значения цены в зависимости от типа жилья
+ * @param {*} evt - event
  */
-var onTypeInputChange = function () {
-  var minPrice;
-
-  switch (typeField.value) {
-    case 'bungalo':
-      minPrice = 0;
-      break;
-    case 'flat':
-      minPrice = 1000;
-      break;
-    case 'house':
-      minPrice = 5000;
-      break;
-    case 'palace':
-      minPrice = 10000;
-      break;
-  }
-
-  priceField.setAttribute('min', minPrice);
-};
-
-typeField.addEventListener('change', onTypeInputChange);
-
-/**
- * Функция добавления атрибута disabled option
- * @param {*} select - select
- */
-var makeDisableOptions = function (select) {
-  for (var i = 0; i < select.options.length; i++) {
-    select.options[i].setAttribute('disabled', '');
-  }
+var onTypeInputChange = function (evt) {
+  priceField.setAttribute('min', MinPrices[evt.target.value]);
+  priceField.setAttribute('placeholder', MinPrices[evt.target.value]);
 };
 
 /**
- * Функция удаления атрибута disabled
- * @param {*} select - select
- * @param {*} value - значение
+ * Функция устанавливает пункты селекта в неактивное состояние
+ * @param {*} fields - коллекция HTML-объектов;
  */
-var makeEnableOptions = function (select, value) {
-  for (var i = value - 1; i >= 0; i--) {
-    select.options[2 - i].removeAttribute('disabled');
+var makeFieldsDisabled = function (fields) {
+  fields.forEach(function (field) {
+    field.disabled = true;
+  });
+};
+
+/**
+ * Функция проверки доступности вариантов выбора количества мест
+ * @param {*} options - коллекция HTML-объектов
+ * @param {*} roomIndex - ключ
+ */
+var checkRooms = function (options, roomIndex) {
+  if (roomIndex === 0) {
+    options[3].disabled = false;
+  } else {
+    for (var i = roomIndex; i > 0; i--) {
+      options.forEach(function (capacity) {
+        if (parseInt(capacity.value, 10) === i) {
+          capacity.disabled = false;
+        }
+      });
+    }
   }
 };
 
 /**
- * Функция синхронизации полей количества комнат и количества гостей
+ * Функция смены количества мест в зависимости от количества выбранных комнат
+ * @param {*} evt - event
  */
-var onRoomsInputClick = function () {
-  makeDisableOptions(capacityField);
-  switch (roomsField.value) {
-    case '1':
-      makeEnableOptions(capacityField, roomsField.value);
-      break;
-    case '2':
-      makeEnableOptions(capacityField, roomsField.value);
-      break;
-    case '3':
-      makeEnableOptions(capacityField, roomsField.value);
-      break;
-    case '100':
-      capacityField.options[3].removeAttribute('disabled');
-      break;
-  }
+var onRoomFieldClick = function (evt) {
+  makeFieldsDisabled(capacities);
+
+  checkRooms(capacities, Rooms[evt.target.value]);
+
+  capacityField.value = Rooms[evt.target.value];
 };
 
-capacityField.options[2].setAttribute('selected', '');
+/**
+ * Функция активации полей формы объявления
+ */
+var activateForm = function () {
+  advertForm.querySelectorAll('fieldset').forEach(function (fieldset) {
+    fieldset.disabled = false;
+  });
 
-roomsField.addEventListener('click', onRoomsInputClick);
+  capacityField.value = roomsField.value;
+  makeFieldsDisabled(capacities);
+  checkRooms(capacities, parseInt(roomsField.value, 10));
 
-checkinField.addEventListener('change', function () {
-  checkoutField.value = checkinField.value;
-});
-
-checkoutField.addEventListener('change', function () {
-  checkinField.value = checkoutField.value;
-});
-
-addressField.value = (mainPin.offsetTop + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetLeft + mainPin.scrollHeight);
+  priceField.setAttribute('placeholder', MinPrices[typeField.value]);
+  addressField.value = (mainPin.offsetTop + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetLeft + mainPin.scrollHeight);
+};
 
 /**
  * Функция активации карты и формы
  */
-var activate = function () {
+var activatePage = function () {
   map.classList.remove('map--faded');
   advertForm.classList.remove('ad-form--disabled');
+  mainPin.removeEventListener('mousedown', onMainPinClick);
+  mainPin.removeEventListener('keydown', onMainPinEnterPress);
+  activateForm();
 };
 
 /**
@@ -295,7 +332,8 @@ var activate = function () {
  */
 var onMainPinClick = function (evt) {
   if (evt.button === LEFT_MOUSE_BUTTON) {
-    activate();
+    activatePage();
+    renderMapPins(advertsData);
   }
 };
 
@@ -304,14 +342,11 @@ var onMainPinClick = function (evt) {
  * @param {*} evt - Event
  */
 var onMainPinEnterPress = function (evt) {
-  if (evt.key === ENTER) {
-    activate();
+  if (evt.key === Keys.ENTER) {
+    activatePage();
+    renderMapPins(advertsData);
   }
 };
-
-mainPin.addEventListener('mousedown', onMainPinClick);
-
-mainPin.addEventListener('keydown', onMainPinEnterPress);
 
 /**
  * Функция рисует маркеры объявления из из массива объектов объявлений
@@ -326,6 +361,9 @@ var renderMapPins = function (adverts) {
     avatar.src = advert.author.avatar;
     avatar.alt = advert.offer.title;
     fragment.appendChild(pin);
+    pin.addEventListener('click', function () {
+      renderCard(advert);
+    });
   });
   mapPins.appendChild(fragment);
 };
@@ -336,7 +374,6 @@ var renderMapPins = function (adverts) {
  */
 var renderCard = function (advert) {
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
-  var fragment = document.createDocumentFragment();
 
   var card = cardTemplate.cloneNode(true);
 
@@ -353,30 +390,74 @@ var renderCard = function (advert) {
   var features = featuresList.querySelectorAll('.popup__feature');
 
   features.forEach(function (feature) {
-    if (!(advert.offer.features.includes(feature.classList[1].split('--')[1]))) {
-      featuresList.removeChild(feature);
-    }
+    var featureItem = featuresList.removeChild(feature);
+    advert.offer.features.forEach(function (offerFeature) {
+      if (featureItem.classList.value.includes(offerFeature)) {
+        featuresList.appendChild(featureItem);
+      }
+    });
   });
 
   var photos = card.querySelector('.popup__photos');
-  var photo = photos.removeChild(photos.querySelector('.popup__photo'));
 
-  advert.offer.photos.forEach(function (photoItem) {
-    var photoCopy = photo.cloneNode();
-    photoCopy.src = photoItem;
-    photos.appendChild(photoCopy);
-  });
+  if (advert.offer.photos) {
+    var photo = photos.removeChild(photos.querySelector('.popup__photo'));
+    advert.offer.photos.forEach(function (photoItem) {
+      var photoCopy = photo.cloneNode();
+      photoCopy.src = photoItem;
+      photos.appendChild(photoCopy);
+    });
+    card.appendChild(photos);
+  } else {
+    card.removeChild(photos);
+  }
 
-  card.appendChild(photos);
+  map.insertBefore(card, map.querySelector('.map__filters-container'));
 
-  fragment.appendChild(card);
+  /**
+   * Функция скрытия карточки объявления
+   * @param {*} evt - Event
+   */
+  var onCloseCardBtnClick = function (evt) {
+    if (evt.target.type === 'button') {
+      map.removeChild(card);
+      card.removeEventListener('click', onCloseCardBtnClick);
+    }
+  };
 
+  /**
+   * Функция скрытия карточки объявления по нажатию ESC
+   * @param {*} evt - Event
+   */
+  var onEscapePress = function (evt) {
+    if (evt.key === Keys.ESC) {
+      map.removeChild(card);
+      card.removeEventListener('click', onCloseCardBtnClick);
+      window.removeEventListener('keydown', onEscapePress);
+    }
+  };
 
-  map.insertBefore(fragment, map.querySelector('.map__filters-container'));
+  card.addEventListener('click', onCloseCardBtnClick);
+  window.addEventListener('keydown', onEscapePress);
 };
 
-var advertsData = getAdvertsData(8);
-renderMapPins(advertsData);
-renderCard(advertsData[3]);
 
+typeField.addEventListener('change', onTypeInputChange);
 
+makeFieldsDisabled(formFields);
+
+roomsField.addEventListener('mouseup', onRoomFieldClick);
+
+checkinField.addEventListener('change', function () {
+  checkoutField.value = checkinField.value;
+});
+
+checkoutField.addEventListener('change', function () {
+  checkinField.value = checkoutField.value;
+});
+
+var advertsData = generateAdverts(8);
+
+mainPin.addEventListener('mousedown', onMainPinClick);
+
+mainPin.addEventListener('keydown', onMainPinEnterPress);
