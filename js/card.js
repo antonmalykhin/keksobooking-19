@@ -4,54 +4,80 @@
   var map = document.querySelector('.map');
 
   /**
-   * Функция генерации предложения
-   * @param {number} index
-   * @return {object}
-   *
+   * Функция отображения окна объявления
+   * @param {object} advert - Объектов объявления
    */
-  var getAdvertData = function (index) {
+  var renderCard = function (advert) {
+    var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
-    var advertData = {};
+    var card = cardTemplate.cloneNode(true);
 
-    var xPosition = window.utils.getRandomNumber(window.data.PIN_WIDTH / 2, map.clientWidth - window.data.PIN_WIDTH / 2);
-    var yPosition = window.utils.getRandomNumber(window.data.PinPositionY.MIN, window.data.PinPositionY.MAX);
-    advertData.author = {avatar: 'img/avatars/user0' + (index + 1) + '.png'};
-    advertData.offer = {
-      title: window.data.ADVERT_TITLE,
-      address: xPosition + ', ' + yPosition,
-      price: window.utils.getRandomNumber(window.data.MAX_PRICE),
-      type: window.utils.getRandomValueFromArray(window.data.HOST_TYPES),
-      rooms: window.utils.getRandomNumber(window.data.ROOMS_QUANTITY),
-      guests: window.utils.getRandomNumber(window.data.GUESTS_QUANTITY),
-      checkin: window.utils.getRandomValueFromArray(window.data.TIME_PERIODS),
-      checkout: window.utils.getRandomValueFromArray(window.data.TIME_PERIODS),
-      features: window.utils.getRandomArray(window.data.FEATURES),
-      description: window.data.DESCRIPTION,
-      photos: window.utils.getRandomArray(window.data.PHOTOS),
-    };
+    card.querySelector('.popup__avatar').src = advert.author.avatar;
+    card.querySelector('.popup__title').innerText = advert.offer.title;
+    card.querySelector('.popup__text--address').innerText = advert.offer.address;
+    card.querySelector('.popup__text--price').innerText = advert.offer.price + '₽/ночь';
+    card.querySelector('.popup__type').innerText = advert.offer.type;
+    card.querySelector('.popup__text--capacity').innerText = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
+    card.querySelector('.popup__text--time').innerText = 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
+    card.querySelector('.popup__description').innerText = advert.offer.description;
 
-    advertData.location = {
-      x: xPosition,
-      y: yPosition
-    };
+    var featuresList = card.querySelector('.popup__features');
+    var features = featuresList.querySelectorAll('.popup__feature');
 
-    return advertData;
-  };
+    features.forEach(function (feature) {
+      var featureItem = featuresList.removeChild(feature);
+      advert.offer.features.forEach(function (offerFeature) {
+        if (featureItem.classList.value.includes(offerFeature)) {
+          featuresList.appendChild(featureItem);
+        }
+      });
+    });
 
-  /**
-   *  Функуия генерации предложений
-   * @param {number} quantityAdverts - количество генерируемых предложений
-   * @return {array}
-   */
-  var generateAdverts = function (quantityAdverts) {
-    var adverts = [];
-    for (var i = 0; i < quantityAdverts; i++) {
-      adverts.push(getAdvertData(i));
+    var photos = card.querySelector('.popup__photos');
+
+    if (advert.offer.photos) {
+      var photo = photos.removeChild(photos.querySelector('.popup__photo'));
+      advert.offer.photos.forEach(function (photoItem) {
+        var photoCopy = photo.cloneNode();
+        photoCopy.src = photoItem;
+        photos.appendChild(photoCopy);
+      });
+      card.appendChild(photos);
+    } else {
+      card.removeChild(photos);
     }
-    return adverts;
+
+    map.insertBefore(card, map.querySelector('.map__filters-container'));
+
+    /**
+     * Функция скрытия карточки объявления
+     * @param {*} evt - Event
+     */
+    var onCloseCardBtnClick = function (evt) {
+      if (evt.target.type === 'button') {
+        map.removeChild(card);
+        card.removeEventListener('click', onCloseCardBtnClick);
+      }
+    };
+
+    /**
+     * Функция скрытия карточки объявления по нажатию ESC
+     * @param {*} evt - Event
+     */
+    var onEscapePress = function (evt) {
+      if (evt.key === window.data.Keys.ESC) {
+        map.removeChild(card);
+        card.removeEventListener('click', onCloseCardBtnClick);
+        window.removeEventListener('keydown', onEscapePress);
+      }
+    };
+
+    card.addEventListener('click', onCloseCardBtnClick);
+    window.addEventListener('keydown', onEscapePress);
   };
 
   window.card = {
-    generateAdverts: generateAdverts
+    renderCard: renderCard
   };
+
 })();

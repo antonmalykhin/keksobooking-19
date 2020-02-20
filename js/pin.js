@@ -5,7 +5,7 @@
   var mainPin = map.querySelector('.map__pin--main');
   var advertForm = document.querySelector('.ad-form');
 
-  var advertsData = window.card.generateAdverts(8);
+  var advertsData = window.data.generateAdverts(8);
 
   /**
  * Функция нажатия на главный маркер левой кнопкой мыши

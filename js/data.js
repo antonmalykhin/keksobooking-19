@@ -137,21 +137,62 @@
     100: 0
   };
 
+
+  var map = document.querySelector('.map');
+
+  /**
+   * Функция генерации предложения
+   * @param {number} index
+   * @return {object}
+   *
+   */
+  var getAdvertData = function (index) {
+
+    var advertData = {};
+
+    var xPosition = window.utils.getRandomNumber(PIN_WIDTH / 2, map.clientWidth - PIN_WIDTH / 2);
+    var yPosition = window.utils.getRandomNumber(PinPositionY.MIN, PinPositionY.MAX);
+    advertData.author = {avatar: 'img/avatars/user0' + (index + 1) + '.png'};
+    advertData.offer = {
+      title: ADVERT_TITLE,
+      address: xPosition + ', ' + yPosition,
+      price: window.utils.getRandomNumber(MAX_PRICE),
+      type: window.utils.getRandomValueFromArray(HOST_TYPES),
+      rooms: window.utils.getRandomNumber(ROOMS_QUANTITY),
+      guests: window.utils.getRandomNumber(GUESTS_QUANTITY),
+      checkin: window.utils.getRandomValueFromArray(TIME_PERIODS),
+      checkout: window.utils.getRandomValueFromArray(TIME_PERIODS),
+      features: window.utils.getRandomArray(FEATURES),
+      description: DESCRIPTION,
+      photos: window.utils.getRandomArray(PHOTOS),
+    };
+
+    advertData.location = {
+      x: xPosition,
+      y: yPosition
+    };
+
+    return advertData;
+  };
+
+  /**
+   *  Функуия генерации предложений
+   * @param {number} quantityAdverts - количество генерируемых предложений
+   * @return {array}
+   */
+  var generateAdverts = function (quantityAdverts) {
+    var adverts = [];
+    for (var i = 0; i < quantityAdverts; i++) {
+      adverts.push(getAdvertData(i));
+    }
+    return adverts;
+  };
+
   window.data = {
-    Keys: Keys,
     LEFT_MOUSE_BUTTON: LEFT_MOUSE_BUTTON,
-    HOST_TYPES: HOST_TYPES,
-    FEATURES: FEATURES,
-    PinPositionY: PinPositionY,
-    TIME_PERIODS: TIME_PERIODS,
-    ADVERT_TITLE: ADVERT_TITLE,
-    MAX_PRICE: MAX_PRICE,
-    ROOMS_QUANTITY: ROOMS_QUANTITY,
-    GUESTS_QUANTITY: GUESTS_QUANTITY,
-    DESCRIPTION: DESCRIPTION,
-    PHOTOS: PHOTOS,
-    PIN_WIDTH: PIN_WIDTH,
+    Keys: Keys,
     MinPrices: MinPrices,
-    Rooms: Rooms
+    Rooms: Rooms,
+    generateAdverts: generateAdverts
   };
 })();
