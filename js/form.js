@@ -65,6 +65,13 @@
   };
 
   /**
+   * Функция изменения поля Адрес
+   */
+  var changeAddressField = function () {
+    addressField.value = (mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetTop + mainPin.offsetHeight + window.data.pinElementHeight);
+  };
+
+  /**
    * Функция активации полей формы объявления
    */
   var activateForm = function () {
@@ -77,7 +84,7 @@
     checkRooms(capacities, parseInt(roomsField.value, 10));
 
     priceField.setAttribute('placeholder', window.data.MinPrices[typeField.value]);
-    addressField.value = (mainPin.offsetTop + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetLeft + mainPin.scrollHeight);
+    changeAddressField();
   };
 
   typeField.addEventListener('change', onTypeInputChange);
@@ -95,6 +102,7 @@
   });
 
   window.form = {
-    activateForm: activateForm
+    activateForm: activateForm,
+    changeAddressField: changeAddressField
   };
 })();
