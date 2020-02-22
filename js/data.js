@@ -137,6 +137,9 @@
     100: 0
   };
 
+  var pinHeight = 78;
+
+  var pinElementHeight = 13;
 
   var map = document.querySelector('.map');
 
@@ -191,8 +194,11 @@
   window.data = {
     LEFT_MOUSE_BUTTON: LEFT_MOUSE_BUTTON,
     Keys: Keys,
+    pinHeight: pinHeight,
+    PinPositionY: PinPositionY,
     MinPrices: MinPrices,
     Rooms: Rooms,
+    pinElementHeight: pinElementHeight,
     generateAdverts: generateAdverts
   };
 })();
