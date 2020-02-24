@@ -8,14 +8,77 @@
   var advertsData = window.data.generateAdverts(8);
 
   /**
- * Функция нажатия на главный маркер левой кнопкой мыши
- * @param {*} evt - Event
- */
+   * Функция нажатия на главный маркер левой кнопкой мыши
+   * @param {*} evt - Event
+   */
   var onMainPinClick = function (evt) {
     if (evt.button === window.data.LEFT_MOUSE_BUTTON) {
       activatePage();
       window.map.renderMapPins(advertsData);
     }
+  };
+  /**
+   * Функция перемещения главного пина
+   * @param {*} evt -Event
+   */
+  var onMainPinMove = function (evt) {
+
+    var pinCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    /**
+     * Функция реализует изменения координат главного пина в зависимости от координат мыши
+     * @param {*} moveEvt - Event
+     */
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: pinCoords.x - moveEvt.clientX,
+        y: pinCoords.y - moveEvt.clientY
+      };
+
+      pinCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      var pinPosition = {
+        x: mainPin.offsetLeft - shift.x,
+        y: mainPin.offsetTop - shift.y
+      };
+
+      if (pinPosition.y < window.data.PinPositionY.MIN - window.data.PIN_HEIGHT + window.data.PIN_OFFSET_Y) {
+        pinPosition.y = window.data.PinPositionY.MIN - (window.data.PIN_HEIGHT - window.data.PIN_OFFSET_Y);
+      } else if (pinPosition.y > window.data.PinPositionY.MAX - window.data.PIN_HEIGHT + window.data.PIN_OFFSET_Y) {
+        pinPosition.y = window.data.PinPositionY.MAX - window.data.PIN_HEIGHT + window.data.PIN_OFFSET_Y;
+      } else if (pinPosition.x < -mainPin.offsetWidth / 2) {
+        pinPosition.x = -mainPin.offsetWidth / 2;
+      } else if (pinPosition.x > map.offsetWidth - mainPin.offsetWidth / 2) {
+        pinPosition.x = map.offsetWidth - mainPin.offsetWidth / 2;
+      }
+
+      mainPin.style.top = pinPosition.y + 'px';
+      mainPin.style.left = pinPosition.x + 'px';
+    };
+
+    /**
+     * Функция отпускания кнопки мыши
+     * @param {*} upEvt - Event
+     */
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      window.form.changeAddressField();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+
   };
 
   /**
@@ -43,4 +106,7 @@
   mainPin.addEventListener('mousedown', onMainPinClick);
 
   mainPin.addEventListener('keydown', onMainPinEnterPress);
+
+  mainPin.addEventListener('mousedown', onMainPinMove);
+
 })();
