@@ -50,10 +50,10 @@
         y: mainPin.offsetTop - shift.y
       };
 
-      if (pinPosition.y < window.data.PinPositionY.MIN - window.data.pinHeight) {
-        pinPosition.y = window.data.PinPositionY.MIN - window.data.pinHeight;
-      } else if (pinPosition.y > window.data.PinPositionY.MAX - window.data.pinHeight) {
-        pinPosition.y = window.data.PinPositionY.MAX - window.data.pinHeight;
+      if (pinPosition.y < window.data.PinPositionY.MIN - window.data.PIN_HEIGHT + window.data.PIN_OFFSET_Y) {
+        pinPosition.y = window.data.PinPositionY.MIN - (window.data.PIN_HEIGHT - window.data.PIN_OFFSET_Y);
+      } else if (pinPosition.y > window.data.PinPositionY.MAX - window.data.PIN_HEIGHT + window.data.PIN_OFFSET_Y) {
+        pinPosition.y = window.data.PinPositionY.MAX - window.data.PIN_HEIGHT + window.data.PIN_OFFSET_Y;
       } else if (pinPosition.x < -mainPin.offsetWidth / 2) {
         pinPosition.x = -mainPin.offsetWidth / 2;
       } else if (pinPosition.x > map.offsetWidth - mainPin.offsetWidth / 2) {
