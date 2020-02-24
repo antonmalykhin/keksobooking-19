@@ -137,9 +137,12 @@
     100: 0
   };
 
-  var pinHeight = 78;
+  var PIN_HEIGHT = 78;
 
-  var pinElementHeight = 13;
+  var PIN_ELEMENT_HEIGHT = 13;
+
+  var PIN_OFFSET_Y = 60;
+
 
   var map = document.querySelector('.map');
 
@@ -194,11 +197,12 @@
   window.data = {
     LEFT_MOUSE_BUTTON: LEFT_MOUSE_BUTTON,
     Keys: Keys,
-    pinHeight: pinHeight,
+    PIN_HEIGHT: PIN_HEIGHT,
     PinPositionY: PinPositionY,
     MinPrices: MinPrices,
     Rooms: Rooms,
-    pinElementHeight: pinElementHeight,
+    PIN_ELEMENT_HEIGHT: PIN_ELEMENT_HEIGHT,
+    PIN_OFFSET_Y: PIN_OFFSET_Y,
     generateAdverts: generateAdverts
   };
 })();
