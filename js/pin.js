@@ -5,8 +5,6 @@
   var mainPin = map.querySelector('.map__pin--main');
   var advertForm = document.querySelector('.ad-form');
 
-  var advertsData = window.data.generateAdverts(8);
-
   /**
    * Функция нажатия на главный маркер левой кнопкой мыши
    * @param {*} evt - Event
@@ -14,7 +12,7 @@
   var onMainPinClick = function (evt) {
     if (evt.button === window.data.LEFT_MOUSE_BUTTON) {
       activatePage();
-      window.map.renderMapPins(advertsData);
+      window.load(window.map.renderMapPins);
     }
   };
   /**
@@ -88,7 +86,7 @@
   var onMainPinEnterPress = function (evt) {
     if (evt.key === window.data.Keys.ENTER) {
       activatePage();
-      window.map.renderMapPins(advertsData);
+      window.load(window.map.renderMapPins);
     }
   };
 
