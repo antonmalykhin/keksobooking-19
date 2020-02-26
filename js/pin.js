@@ -107,4 +107,10 @@
 
   mainPin.addEventListener('mousedown', onMainPinMove);
 
+  window.pin = {
+    activatePage: activatePage,
+    onMainPinEnterPress: onMainPinEnterPress,
+    onMainPinClick: onMainPinClick
+  };
+
 })();
