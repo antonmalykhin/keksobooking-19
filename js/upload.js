@@ -2,7 +2,7 @@
 
 (function () {
 
-  window.load = function (onSuccess, onError) {
+  window.upload = function (data, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
@@ -11,7 +11,7 @@
       if (xhr.status === window.data.StatusCodes.OK) {
         onSuccess(xhr.response);
       } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        onError('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
@@ -19,14 +19,7 @@
       onError('Произошла ошибка соединения');
     });
 
-    xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
-    });
-
-    xhr.timeout = window.data.TIMEOUT;
-
-    xhr.open('GET', window.data.URL_LOAD);
-    xhr.send();
+    xhr.open('POST', window.data.URL_UPLOAD);
+    xhr.send(data);
   };
-
 })();

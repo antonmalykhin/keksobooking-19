@@ -1,9 +1,10 @@
 'use strict';
 
 (function () {
-  var map = document.querySelector('.map');
+  var main = document.querySelector('main');
+  var map = main.querySelector('.map');
   var mainPin = map.querySelector('.map__pin--main');
-  var advertForm = document.querySelector('.ad-form');
+  var advertForm = main.querySelector('.ad-form');
   var formFields = advertForm.querySelectorAll('fieldset');
   var priceField = advertForm.querySelector('#price');
   var addressField = advertForm.querySelector('#address');
@@ -13,6 +14,8 @@
   var capacityField = advertForm.querySelector('#capacity');
   var capacities = capacityField.querySelectorAll('option');
   var typeField = advertForm.querySelector('#type');
+  var notice = main.querySelector('.notice');
+  var resetFormBtn = advertForm.querySelector('.ad-form__reset');
 
   /**
    * Функция добавления атрибута минимального значения цены в зависимости от типа жилья
@@ -71,6 +74,13 @@
     addressField.value = (mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetTop + mainPin.offsetHeight + window.data.PIN_ELEMENT_HEIGHT - window.data.PIN_OFFSET_Y);
   };
 
+
+  var onResetFormBtnClick = function () {
+    resetPage();
+    resetFormBtn.removeEventListener('click', onResetFormBtnClick);
+  };
+
+
   /**
    * Функция активации полей формы объявления
    */
@@ -85,6 +95,25 @@
 
     priceField.setAttribute('placeholder', window.data.MinPrices[typeField.value]);
     changeAddressField();
+
+    resetFormBtn.addEventListener('click', onResetFormBtnClick);
+  };
+
+  var resetPage = function () {
+    advertForm.reset();
+    makeFieldsDisabled(formFields);
+    advertForm.classList.add('ad-form--disabled');
+
+    map.querySelectorAll('.map__pin').forEach(function (pin) {
+      if (!pin.classList.contains('map__pin--main')) {
+        pin.remove();
+      }
+    });
+    map.classList.add('map--faded');
+    mainPin.style.top = window.data.MainPinDefaultPosition.TOP;
+    mainPin.style.left = window.data.MainPinDefaultPosition.LEFT;
+    mainPin.addEventListener('mousedown', window.pin.onMainPinClick);
+    mainPin.addEventListener('keydown', window.pin.onMainPinEnterPress);
   };
 
   typeField.addEventListener('change', onTypeInputChange);
@@ -101,8 +130,68 @@
     checkinField.value = checkoutField.value;
   });
 
+  var onSuccessLoad = function () {
+    var successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+    var successMessage = successMessageTemplate.cloneNode(true);
+    main.insertBefore(successMessage, notice);
+
+    var onEmptyAriaClick = function () {
+      successMessage.remove();
+      resetPage();
+      document.removeEventListener('click', onEmptyAriaClick);
+      document.removeEventListener('keydown', onEscapeKeyPress);
+    };
+
+    var onEscapeKeyPress = function (evt) {
+      if (evt.key === window.data.Keys.ESC) {
+        successMessage.remove();
+        resetPage();
+        document.removeEventListener('keydown', onEscapeKeyPress);
+        document.removeEventListener('click', onEmptyAriaClick);
+      }
+    };
+    document.addEventListener('click', onEmptyAriaClick);
+    document.addEventListener('keydown', onEscapeKeyPress);
+  };
+
+  var onErrorLoad = function () {
+    var errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
+    var errorMessage = errorMessageTemplate.cloneNode(true);
+    var tryAgainBtn = errorMessage.querySelector('.error__button');
+
+    main.insertBefore(errorMessage, notice);
+
+    var closeErrorMessage = function () {
+      errorMessage.remove();
+      tryAgainBtn.removeEventListener('click', onTryAgainBtnClick);
+      document.removeEventListener('keydown', onEscapeKeyPress);
+      document.removeEventListener('click', onEmptyAriaClick);
+    };
+
+    var onTryAgainBtnClick = function () {
+      closeErrorMessage();
+    };
+
+    var onEscapeKeyPress = function () {
+      closeErrorMessage();
+    };
+
+    var onEmptyAriaClick = function () {
+      closeErrorMessage();
+    };
+
+    tryAgainBtn.addEventListener('click', onTryAgainBtnClick);
+    document.addEventListener('keydown', onEscapeKeyPress);
+    document.addEventListener('click', onEmptyAriaClick);
+  };
+
+  advertForm.addEventListener('submit', function (evt) {
+    window.upload(new FormData(advertForm), onSuccessLoad, onErrorLoad);
+    evt.preventDefault();
+  });
+
   window.form = {
     activateForm: activateForm,
-    changeAddressField: changeAddressField
+    changeAddressField: changeAddressField,
   };
 })();

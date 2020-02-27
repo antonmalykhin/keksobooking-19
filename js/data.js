@@ -57,6 +57,19 @@
 
   var PIN_OFFSET_Y = 60;
 
+  var MainPinDefaultPosition = {
+    TOP: '375px',
+    LEFT: '570px'
+  };
+
+  var StatusCodes = {
+    OK: 200
+  };
+  var TIMEOUT = 10000;
+
+  var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
+  var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
+
   window.data = {
     LEFT_MOUSE_BUTTON: LEFT_MOUSE_BUTTON,
     Keys: Keys,
@@ -66,5 +79,10 @@
     Rooms: Rooms,
     PIN_ELEMENT_HEIGHT: PIN_ELEMENT_HEIGHT,
     PIN_OFFSET_Y: PIN_OFFSET_Y,
+    StatusCodes: StatusCodes,
+    TIMEOUT: TIMEOUT,
+    URL_LOAD: URL_LOAD,
+    URL_UPLOAD: URL_UPLOAD,
+    MainPinDefaultPosition: MainPinDefaultPosition
   };
 })();
