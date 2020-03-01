@@ -14,12 +14,23 @@
   var mapPins = map.querySelector('.map__pins');
 
   /**
+   * Функция очистки карты от объявлений
+   */
+  var removeCards = function () {
+    var mapCards = map.querySelectorAll('.map__card');
+    mapCards.forEach(function (card) {
+      map.removeChild(card);
+    });
+  };
+
+  /**
    * Функция отрисовки карточки по нажатию на пин
    * @param {*} pin - пин
    * @param {*} advert - объявление
    */
   var makeCard = function (pin, advert) {
     pin.addEventListener('click', function () {
+      removeCards();
       window.card.renderCard(advert);
     });
   };
@@ -29,9 +40,14 @@
    * @param {*} adverts - Массив объектов объявлений
    */
   var renderMapPins = function (adverts) {
+
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < ADVERTS_NUM; i++) {
+    if (adverts.length > ADVERTS_NUM) {
+      adverts = adverts.slice(0, ADVERTS_NUM);
+    }
+
+    for (var i = 0; i < adverts.length; i++) {
       var pin = pinTemplate.cloneNode(true);
       var avatar = pin.querySelector('img');
       var advert = adverts[i];
@@ -47,6 +63,7 @@
   };
 
   window.map = {
-    renderMapPins: renderMapPins
+    renderMapPins: renderMapPins,
+    removeCards: removeCards
   };
 })();
