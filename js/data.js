@@ -51,23 +51,65 @@
     100: 0
   };
 
+  /**
+   * Высота пина
+   * @constant
+   * @type {number}
+   */
   var PIN_HEIGHT = 78;
 
+  /**
+   * Высота элемента-указателя пина
+   * @constant
+   * @type {number}
+   */
   var PIN_ELEMENT_HEIGHT = 13;
 
+  /**
+   * Поправка координаты по оси Y пина
+   * @constant
+   * @type {number}
+   */
   var PIN_OFFSET_Y = 60;
 
+  /**
+   * Дефолтные координаты пина
+   * @constant
+   * @type {object}
+   */
   var MainPinDefaultPosition = {
     TOP: '375px',
     LEFT: '570px'
   };
 
+  /**
+   * Коды ответа сервера
+   * @constant
+   * @type {object}
+   */
   var StatusCodes = {
     OK: 200
   };
+
+  /**
+   * Длинна таймаута
+   * @constant
+   * @type {number}
+   */
   var TIMEOUT = 10000;
 
+  /**
+   * url для загрузки данных с сервера
+   * @constant
+   * @type {string}
+   */
   var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
+
+  /**
+   * url для загрузки данных на сервера
+   * @constant
+   * @type {string}
+   */
   var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
 
   window.data = {
