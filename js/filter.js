@@ -3,6 +3,7 @@
 (function () {
   var mapFilter = document.querySelector('.map__filters');
   var houseTypeField = mapFilter.querySelector('#housing-type');
+  var housePriceField = mapFilter.querySelector('#housing-price');
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
 
@@ -21,8 +22,9 @@
   /**
    * Функция фильтрации отображаемых объявлений
    * @param {array} adverts - массив объектов объявлений
+   * @return {arrya}
    */
-  var filterAdverts = function (adverts) {
+  var filterByType = function (adverts) {
 
     var filteredAdverts = [];
 
@@ -34,7 +36,50 @@
       filteredAdverts = adverts;
     }
 
-    window.map.renderMapPins(filteredAdverts);
+    // window.map.renderMapPins(filteredAdverts);
+
+    return filteredAdverts;
+  };
+
+  /**
+   * Функция фильтрации по стоимости жилья
+   * @param {array} adverts
+   * @return {array}
+   */
+  var filterByPrice = function (adverts) {
+
+    var filteredAdverts = [];
+
+    switch (housePriceField.value) {
+      case 'middle':
+        filteredAdverts = adverts.filter(function (advert) {
+          return advert.offer.price < 50000 && advert.offer.price >= 10000;
+        });
+        break;
+      case 'low':
+        filteredAdverts = adverts.filter(function (advert) {
+          return advert.offer.price < 10000;
+        });
+        break;
+      case 'high':
+        filteredAdverts = adverts.filter(function (advert) {
+          return advert.offer.price > 50000;
+        });
+        break;
+      default:
+        filteredAdverts = adverts;
+    }
+
+    return filteredAdverts;
+  };
+
+  var filtrateAdverts = function (adverts) {
+    var tempAds = [];
+    tempAds = filterByType(adverts);
+    // console.log(tempAds);
+    tempAds = filterByPrice(tempAds);
+
+    window.map.renderMapPins(tempAds);
   };
 
   /**
@@ -42,10 +87,11 @@
    */
   var onHouseTypeFieldChange = function () {
     window.map.removeCards();
-    window.load(filterAdverts);
+    window.load(filtrateAdverts);
     clearMap();
   };
 
   houseTypeField.addEventListener('change', onHouseTypeFieldChange);
+  housePriceField.addEventListener('change', onHouseTypeFieldChange);
 
 })();
