@@ -74,7 +74,9 @@
     addressField.value = (mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetTop + mainPin.offsetHeight + window.data.PIN_ELEMENT_HEIGHT - window.data.PIN_OFFSET_Y);
   };
 
-
+  /**
+   * Функция нажатия на кнопку сброса формы
+   */
   var onResetFormBtnClick = function () {
     resetPage();
     resetFormBtn.removeEventListener('click', onResetFormBtnClick);
@@ -99,6 +101,9 @@
     resetFormBtn.addEventListener('click', onResetFormBtnClick);
   };
 
+  /**
+   * Функция сброса формы
+   */
   var resetPage = function () {
     advertForm.reset();
     makeFieldsDisabled(formFields);
@@ -130,11 +135,17 @@
     checkinField.value = checkoutField.value;
   });
 
+  /**
+   * Функция показа сообщения при успешной загрузки данных с сервера
+   */
   var onSuccessLoad = function () {
     var successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
     var successMessage = successMessageTemplate.cloneNode(true);
     main.insertBefore(successMessage, notice);
 
+    /**
+     * Функция скрытия сообщения по нажатию мышью на свободную область
+     */
     var onEmptyAriaClick = function () {
       successMessage.remove();
       resetPage();
@@ -142,6 +153,10 @@
       document.removeEventListener('keydown', onEscapeKeyPress);
     };
 
+    /**
+     * Функция скрытия сообщения по нажатию на клавишу Escape
+     * @param {*} evt -   event
+     */
     var onEscapeKeyPress = function (evt) {
       if (evt.key === window.data.Keys.ESC) {
         successMessage.remove();
@@ -154,6 +169,9 @@
     document.addEventListener('keydown', onEscapeKeyPress);
   };
 
+  /**
+   * Функция показа сообщения при ошибки загрузки данных с сервера
+   */
   var onErrorLoad = function () {
     var errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorMessage = errorMessageTemplate.cloneNode(true);
@@ -161,6 +179,9 @@
 
     main.insertBefore(errorMessage, notice);
 
+    /**
+     * Функция скрытия сообщения
+     */
     var closeErrorMessage = function () {
       errorMessage.remove();
       tryAgainBtn.removeEventListener('click', onTryAgainBtnClick);
@@ -168,14 +189,23 @@
       document.removeEventListener('click', onEmptyAriaClick);
     };
 
+    /**
+     * Функция скрытия сообщения при нажатии на кнопку "Попробовать снова"
+     */
     var onTryAgainBtnClick = function () {
       closeErrorMessage();
     };
 
+    /**
+     * Функция скрытия сообщения по нажатию на клавишу Escape
+     */
     var onEscapeKeyPress = function () {
       closeErrorMessage();
     };
 
+    /**
+     * Функция скрытия сообщения по нажатию мышью на свободную область
+     */
     var onEmptyAriaClick = function () {
       closeErrorMessage();
     };
