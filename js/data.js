@@ -112,6 +112,8 @@
    */
   var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
 
+  var DEBOUNCE_INTERVAL = 1000;
+
   window.data = {
     LEFT_MOUSE_BUTTON: LEFT_MOUSE_BUTTON,
     Keys: Keys,
@@ -125,6 +127,7 @@
     TIMEOUT: TIMEOUT,
     URL_LOAD: URL_LOAD,
     URL_UPLOAD: URL_UPLOAD,
-    MainPinDefaultPosition: MainPinDefaultPosition
+    MainPinDefaultPosition: MainPinDefaultPosition,
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL
   };
 })();
