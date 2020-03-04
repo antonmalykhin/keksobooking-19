@@ -111,26 +111,40 @@
     return filteredAdverts;
   };
 
-
   /**
-   * Функция создания массива выбранных преимуществ
+   * Функция фильтрации по удобствам
+   * @param {array} adverts
    * @return {array}
    */
-  var createFeaturesArray = function () {
-    var temp = [];
+  var filterFeatures = function (adverts) {
+
+    var filteredArray = [];
 
     houseFeatures.forEach(function (feature) {
       if (feature.checked) {
-        temp.push(feature.value);
+        filteredArray = adverts.filter(function (it) {
+          return it.offer.features.includes(feature.value);
+        });
+
+        adverts = filteredArray;
+
+      } else {
+
+        filteredArray = adverts;
+
       }
     });
 
-    return temp;
+    return filteredArray;
   };
 
-
+  /**
+   * Функция фильтрации объявлений
+   * @param {array} adverts
+   */
   var filtrateAdverts = function (adverts) {
     var tempAds = [];
+
     tempAds = filterByType(adverts);
 
     tempAds = filterByPrice(tempAds);
@@ -138,6 +152,8 @@
     tempAds = filterByRooms(tempAds);
 
     tempAds = filterByGuests(tempAds);
+
+    tempAds = filterFeatures(tempAds);
 
     window.utils.debounce(function () {
       window.map.renderMapPins(tempAds);
