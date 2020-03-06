@@ -50,9 +50,22 @@
     }
     return newArray;
   };
+
+
+  var lastTimeout;
+
+  var debounce = function (cb) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(cb, window.data.DEBOUNCE_INTERVAL);
+  };
+
+
   window.utils = {
     getRandomNumber: getRandomNumber,
     getRandomValueFromArray: getRandomValueFromArray,
     getRandomArray: getRandomArray,
+    debounce: debounce
   };
 })();

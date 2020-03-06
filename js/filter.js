@@ -3,6 +3,10 @@
 (function () {
   var mapFilter = document.querySelector('.map__filters');
   var houseTypeField = mapFilter.querySelector('#housing-type');
+  var housePriceField = mapFilter.querySelector('#housing-price');
+  var houseRoomsField = mapFilter.querySelector('#housing-rooms');
+  var houseGuestsField = mapFilter.querySelector('#housing-guests');
+  var houseFeatures = mapFilter.querySelectorAll('.map__checkbox');
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
 
@@ -21,8 +25,9 @@
   /**
    * Функция фильтрации отображаемых объявлений
    * @param {array} adverts - массив объектов объявлений
+   * @return {arrya}
    */
-  var filterAdverts = function (adverts) {
+  var filterByType = function (adverts) {
 
     var filteredAdverts = [];
 
@@ -33,8 +38,127 @@
     } else {
       filteredAdverts = adverts;
     }
+    return filteredAdverts;
+  };
 
-    window.map.renderMapPins(filteredAdverts);
+  /**
+   * Функция фильтрации по стоимости жилья
+   * @param {array} adverts
+   * @return {array}
+   */
+  var filterByPrice = function (adverts) {
+
+    var filteredAdverts = [];
+
+    switch (housePriceField.value) {
+      case 'middle':
+        filteredAdverts = adverts.filter(function (advert) {
+          return advert.offer.price < 50000 && advert.offer.price >= 10000;
+        });
+        break;
+      case 'low':
+        filteredAdverts = adverts.filter(function (advert) {
+          return advert.offer.price < 10000;
+        });
+        break;
+      case 'high':
+        filteredAdverts = adverts.filter(function (advert) {
+          return advert.offer.price > 50000;
+        });
+        break;
+      default:
+        filteredAdverts = adverts;
+    }
+
+    return filteredAdverts;
+  };
+
+  /**
+   * Функция фильтрации по количеству комнат
+   * @param {array} adverts
+   * @return {array}
+   */
+  var filterByRooms = function (adverts) {
+    var filteredAdverts = [];
+    if (!(houseRoomsField.value === 'any')) {
+
+      filteredAdverts = adverts.filter(function (advert) {
+        return parseInt(houseRoomsField.value, 10) === advert.offer.rooms;
+      });
+    } else {
+      filteredAdverts = adverts;
+    }
+
+    return filteredAdverts;
+  };
+
+  /**
+   * Функция фильтрации по количеству гостей
+   * @param {array} adverts
+   * @return {array}
+   */
+  var filterByGuests = function (adverts) {
+    var filteredAdverts = [];
+
+    if (!(houseGuestsField.value === 'any')) {
+      filteredAdverts = adverts.filter(function (advert) {
+        return parseInt(houseGuestsField.value, 10) === advert.offer.guests;
+      });
+    } else {
+      filteredAdverts = adverts;
+    }
+
+    return filteredAdverts;
+  };
+
+  /**
+   * Функция фильтрации по удобствам
+   * @param {array} adverts
+   * @return {array}
+   */
+  var filterFeatures = function (adverts) {
+
+    var filteredArray = [];
+
+    houseFeatures.forEach(function (feature) {
+      if (feature.checked) {
+        filteredArray = adverts.filter(function (it) {
+          return it.offer.features.includes(feature.value);
+        });
+
+        adverts = filteredArray;
+
+      } else {
+
+        filteredArray = adverts;
+
+      }
+    });
+
+    return filteredArray;
+  };
+
+  /**
+   * Функция фильтрации объявлений
+   * @param {array} adverts
+   */
+  var filtrateAdverts = function (adverts) {
+    var tempAds = [];
+
+    tempAds = filterByType(adverts);
+
+    tempAds = filterByPrice(tempAds);
+
+    tempAds = filterByRooms(tempAds);
+
+    tempAds = filterByGuests(tempAds);
+
+    tempAds = filterFeatures(tempAds);
+
+    window.utils.debounce(function () {
+      window.map.renderMapPins(tempAds);
+    });
+
   };
 
   /**
@@ -42,10 +166,16 @@
    */
   var onHouseTypeFieldChange = function () {
     window.map.removeCards();
-    window.load(filterAdverts);
+    window.load(filtrateAdverts);
     clearMap();
   };
 
   houseTypeField.addEventListener('change', onHouseTypeFieldChange);
+  housePriceField.addEventListener('change', onHouseTypeFieldChange);
+  houseRoomsField.addEventListener('change', onHouseTypeFieldChange);
+  houseGuestsField.addEventListener('change', onHouseTypeFieldChange);
+  houseFeatures.forEach(function (item) {
+    item.addEventListener('change', onHouseTypeFieldChange);
+  });
 
 })();
