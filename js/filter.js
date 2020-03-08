@@ -25,7 +25,7 @@
   /**
    * Функция фильтрации отображаемых объявлений
    * @param {array} adverts - массив объектов объявлений
-   * @return {arrya}
+   * @return {array}
    */
   var filterByType = function (adverts) {
 
