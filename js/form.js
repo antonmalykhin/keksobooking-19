@@ -16,6 +16,10 @@
   var typeField = advertForm.querySelector('#type');
   var notice = main.querySelector('.notice');
   var resetFormBtn = advertForm.querySelector('.ad-form__reset');
+  var avatarChooser = advertForm.querySelector('.ad-form-header__input');
+  var avatar = advertForm.querySelector('.ad-form-header__preview img');
+  var houseImageChooser = advertForm.querySelector('.ad-form__input');
+  var houseImgContainer = advertForm.querySelector('.ad-form__photo');
 
   /**
    * Функция добавления атрибута минимального значения цены в зависимости от типа жилья
@@ -99,6 +103,10 @@
     changeAddressField();
 
     resetFormBtn.addEventListener('click', onResetFormBtnClick);
+
+    avatarChooser.addEventListener('change', window.images.onAvatarChooserChange);
+
+    houseImageChooser.addEventListener('change', window.images.onHouseImageChooser);
   };
 
   /**
@@ -119,6 +127,19 @@
     mainPin.style.left = window.data.MainPinDefaultPosition.LEFT;
     mainPin.addEventListener('mousedown', window.pin.onMainPinClick);
     mainPin.addEventListener('keydown', window.pin.onMainPinEnterPress);
+
+
+    avatar.src = window.data.DEFAULT_AVATAR_IMG;
+
+    if (houseImgContainer.childNodes.length) {
+      houseImgContainer.querySelectorAll(window.data.HousePreviewElement.HOUSE_ELEMENT_TYPE).forEach(function (it) {
+        houseImgContainer.removeChild(it);
+      });
+    }
+
+    avatarChooser.removeEventListener('change', window.images.onAvatarChooserChange);
+
+    houseImageChooser.removeEventListener('change', window.images.onHouseImageChooser);
   };
 
   typeField.addEventListener('change', onTypeInputChange);
