@@ -112,7 +112,32 @@
    */
   var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
 
+  /**
+   * Интервал задержки обновления
+   * @constant
+   * @type {number}
+   */
   var DEBOUNCE_INTERVAL = 1000;
+  /**
+   * Типы файлов изображений
+   * @constant
+   * @type {array}
+   */
+  var FILE_TYPES = ['png', 'jpg', 'jpeg', 'gif'];
+
+  var DEFAULT_AVATAR_IMG = 'img/muffin-grey.svg';
+
+  /**
+   * Объект параметров изображения жилья
+   * @constant
+   * @type {object}
+   */
+  var HousePreviewElement = {
+    HOUSE_ELEMENT_TYPE: 'img',
+    HOUSE_ELEMENT_ALT: 'Изображение жилья',
+    HOUSE_ELEMENT_WIDTH: '70px',
+    HOUSE_ELEMENT_HEIGHT: '70px'
+  };
 
   window.data = {
     LEFT_MOUSE_BUTTON: LEFT_MOUSE_BUTTON,
@@ -128,6 +153,9 @@
     URL_LOAD: URL_LOAD,
     URL_UPLOAD: URL_UPLOAD,
     MainPinDefaultPosition: MainPinDefaultPosition,
-    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
+    FILE_TYPES: FILE_TYPES,
+    DEFAULT_AVATAR_IMG: DEFAULT_AVATAR_IMG,
+    HousePreviewElement: HousePreviewElement
   };
 })();
