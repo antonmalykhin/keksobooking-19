@@ -118,6 +118,7 @@
    * @type {number}
    */
   var DEBOUNCE_INTERVAL = 1000;
+
   /**
    * Типы файлов изображений
    * @constant
@@ -125,6 +126,11 @@
    */
   var FILE_TYPES = ['png', 'jpg', 'jpeg', 'gif'];
 
+  /**
+   * Изображения аватара пользователя по умолчанию
+   * @constant
+   * @type {array}
+   */
   var DEFAULT_AVATAR_IMG = 'img/muffin-grey.svg';
 
   /**
