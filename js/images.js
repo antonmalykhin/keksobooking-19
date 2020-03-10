@@ -41,7 +41,6 @@
     houseElement.alt = window.data.HousePreviewElement.HOUSE_ELEMENT_ALT;
     houseElement.style.width = window.data.HousePreviewElement.HOUSE_ELEMENT_WIDTH;
     houseElement.style.height = window.data.HousePreviewElement.HOUSE_ELEMENT_HEIGHT;
-    houseImageContainer.appendChild(houseElement);
 
     return houseElement;
   };
@@ -58,12 +57,10 @@
    */
   var onHouseImageChooser = function () {
     var housePreview = createPreview();
+    houseImageContainer.appendChild(housePreview);
+
     loadImage(houseImageChooser, housePreview);
   };
-
-  // avatarChooser.addEventListener('change', onAvatarChooserChange);
-
-  // houseImageChooser.addEventListener('change', onHouseImageChooser);
 
   window.images = {
     onAvatarChooserChange: onAvatarChooserChange,
