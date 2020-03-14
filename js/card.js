@@ -37,7 +37,6 @@
       return tempPhoto;
     };
 
-
     /**
      * Функция скрытия карточки объявления
      * @param {*} evt - Event
@@ -45,6 +44,7 @@
     var onCloseCardBtnClick = function (evt) {
       if (evt.target.type === 'button') {
         map.removeChild(card);
+        window.map.removeCards();
         card.removeEventListener('click', onCloseCardBtnClick);
       }
     };
@@ -55,7 +55,7 @@
      */
     var onEscapePress = function (evt) {
       if (evt.key === window.data.Keys.ESC) {
-        map.removeChild(card);
+        window.map.removeCards();
         card.removeEventListener('click', onCloseCardBtnClick);
         window.removeEventListener('keydown', onEscapePress);
       }
