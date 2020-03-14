@@ -2,13 +2,13 @@
 
 (function () {
   var map = document.querySelector('.map');
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
   /**
    * Функция отображения окна объявления
    * @param {object} advert - Объектов объявления
    */
   var renderCard = function (advert) {
-    var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
     var card = cardTemplate.cloneNode(true);
 
@@ -24,13 +24,22 @@
     var featuresList = card.querySelector('.popup__features');
     var features = featuresList.querySelectorAll('.popup__feature');
 
-    features.forEach(function (feature) {
-      var featureItem = featuresList.removeChild(feature);
-      advert.offer.features.forEach(function (offerFeature) {
-        if (featureItem.classList.value.includes(offerFeature)) {
-          featuresList.appendChild(featureItem);
-        }
-      });
+    // features.forEach(function (feature) {
+    //   var featureItem = featuresList.removeChild(feature);
+    //   advert.offer.features.forEach(function (offerFeature) {
+    //     if (featureItem.classList.value.includes(offerFeature)) {
+    //       featuresList.appendChild(featureItem);
+    //     }
+    //   });
+    // });
+
+
+    features.forEach(function (it) {
+      FileList.removeChild(it);
+    });
+
+    advert.offer.features.forEach(function (it) {
+      featuresList.appendChild(it);
     });
 
     var photos = card.querySelector('.popup__photos');
