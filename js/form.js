@@ -4,6 +4,7 @@
   var main = document.querySelector('main');
   var map = main.querySelector('.map');
   var mainPin = map.querySelector('.map__pin--main');
+  var mapFilter = map.querySelector('.map__filters');
   var advertForm = main.querySelector('.ad-form');
   var formFields = advertForm.querySelectorAll('fieldset');
   var priceField = advertForm.querySelector('#price');
@@ -95,6 +96,8 @@
       fieldset.disabled = false;
     });
 
+    mapFilter.style.display = 'flex';
+
     capacityField.value = roomsField.value;
     makeFieldsDisabled(capacities);
     checkRooms(capacities, parseInt(roomsField.value, 10));
@@ -128,6 +131,7 @@
     mainPin.addEventListener('mousedown', window.pin.onMainPinClick);
     mainPin.addEventListener('keydown', window.pin.onMainPinEnterPress);
 
+    mapFilter.style.display = 'none';
 
     avatar.src = window.data.DEFAULT_AVATAR_IMG;
 
@@ -145,6 +149,8 @@
   typeField.addEventListener('change', onTypeInputChange);
 
   makeFieldsDisabled(formFields);
+
+  mapFilter.style.display = 'none';
 
   roomsField.addEventListener('mouseup', onRoomFieldClick);
 
