@@ -3,22 +3,27 @@
 (function () {
   var map = document.querySelector('.map');
   var mainPin = map.querySelector('.map__pin--main');
-  var advertForm = document.querySelector('.ad-form');
 
-  /**
-   * Функция нажатия на главный маркер левой кнопкой мыши
-   * @param {*} evt - Event
-   */
+  var onErrorLoadPins = function (errorText) {
+    var errorMessage = document.createElement('div');
+    var errorMessageText = document.createElement('p');
+    errorMessage.classList.add('error');
+    errorMessageText.classList.add('error__message');
+    errorMessageText.innerText = errorText;
+    errorMessage.appendChild(errorMessageText);
+    document.body.appendChild(errorMessage);
+    setTimeout(function () {
+      errorMessage.remove();
+    }, 3000);
+  };
+
   var onMainPinClick = function (evt) {
     if (evt.button === window.data.LEFT_MOUSE_BUTTON) {
-      activatePage();
-      window.load(window.map.renderMapPins);
+      window.page.activate();
+      window.backend.load(window.map.renderPins, onErrorLoadPins);
     }
   };
-  /**
-   * Функция перемещения главного пина
-   * @param {*} evt -Event
-   */
+
   var onMainPinMove = function (evt) {
 
     var pinCoords = {
@@ -26,10 +31,6 @@
       y: evt.clientY
     };
 
-    /**
-     * Функция реализует изменения координат главного пина в зависимости от координат мыши
-     * @param {*} moveEvt - Event
-     */
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
@@ -62,10 +63,6 @@
       mainPin.style.left = pinPosition.x + 'px';
     };
 
-    /**
-     * Функция отпускания кнопки мыши
-     * @param {*} upEvt - Event
-     */
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
       window.form.changeAddressField();
@@ -79,26 +76,11 @@
 
   };
 
-  /**
-   * Функция нажатия на главный маркер клавишей Enter
-   * @param {*} evt - Event
-   */
   var onMainPinEnterPress = function (evt) {
-    if (evt.key === window.data.Keys.ENTER) {
-      activatePage();
-      window.load(window.map.renderMapPins);
+    if (evt.key === window.data.Key.ENTER) {
+      window.page.activate();
+      window.backend.load(window.map.renderPins, onErrorLoadPins);
     }
-  };
-
-  /**
-   * Функция активации карты и формы
-   */
-  var activatePage = function () {
-    map.classList.remove('map--faded');
-    advertForm.classList.remove('ad-form--disabled');
-    mainPin.removeEventListener('mousedown', onMainPinClick);
-    mainPin.removeEventListener('keydown', onMainPinEnterPress);
-    window.form.activateForm();
   };
 
   mainPin.addEventListener('mousedown', onMainPinClick);
@@ -108,9 +90,7 @@
   mainPin.addEventListener('mousedown', onMainPinMove);
 
   window.pin = {
-    activatePage: activatePage,
     onMainPinEnterPress: onMainPinEnterPress,
     onMainPinClick: onMainPinClick
   };
-
 })();
