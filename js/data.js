@@ -6,12 +6,7 @@
   var PIN_HEIGHT = 78;
   var PIN_ELEMENT_HEIGHT = 13;
   var PIN_OFFSET_Y = 60;
-  var TIMEOUT = 10000;
-  var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
-  var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
-  var DEBOUNCE_INTERVAL = 1000;
   var DEFAULT_AVATAR_IMG = 'img/muffin-grey.svg';
-
   var FILE_TYPES = ['png', 'jpg', 'jpeg', 'gif'];
 
   var Key = {
@@ -43,10 +38,6 @@
     LEFT: '570px'
   };
 
-  var StatusCode = {
-    OK: 200
-  };
-
   var HousePreviewElement = {
     HOUSE_ELEMENT_TYPE: 'img',
     HOUSE_ELEMENT_ALT: 'Изображение жилья',
@@ -59,17 +50,12 @@
     PIN_HEIGHT: PIN_HEIGHT,
     PIN_ELEMENT_HEIGHT: PIN_ELEMENT_HEIGHT,
     PIN_OFFSET_Y: PIN_OFFSET_Y,
-    TIMEOUT: TIMEOUT,
-    URL_LOAD: URL_LOAD,
-    URL_UPLOAD: URL_UPLOAD,
-    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
     FILE_TYPES: FILE_TYPES,
     DEFAULT_AVATAR_IMG: DEFAULT_AVATAR_IMG,
     Key: Key,
     PinPositionY: PinPositionY,
     MinPrice: MinPrice,
     Room: Room,
-    StatusCode: StatusCode,
     MainPinDefaultPosition: MainPinDefaultPosition,
     HousePreviewElement: HousePreviewElement
   };
