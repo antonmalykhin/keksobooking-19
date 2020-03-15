@@ -2,18 +2,7 @@
 
 (function () {
 
-  var form = document.querySelector('.ad-form');
-  var avatarChooser = form.querySelector('.ad-form-header__input');
-  var avatar = form.querySelector('.ad-form-header__preview img');
-  var houseImageChooser = form.querySelector('.ad-form__input');
-  var houseImageContainer = form.querySelector('.ad-form__photo');
-
-  /**
-   * Функция загрузки изображения
-   * @param {*} element
-   * @param {*} prw
-   */
-  var loadImage = function (element, prw) {
+  var load = function (element, prw) {
     var image = element.files[0];
     var imageName = image.name.toLowerCase();
 
@@ -32,10 +21,6 @@
     }
   };
 
-  /**
-   * Функция создания элемента изображения и добавления в разметку
-   * @return {*} houseElement
-   */
   var createPreview = function () {
     var houseElement = document.createElement(window.data.HousePreviewElement.HOUSE_ELEMENT_TYPE);
     houseElement.alt = window.data.HousePreviewElement.HOUSE_ELEMENT_ALT;
@@ -45,25 +30,8 @@
     return houseElement;
   };
 
-  /**
-   * Функция нажатия на кнопку выбора аватара пользователя
-   */
-  var onAvatarChooserChange = function () {
-    loadImage(avatarChooser, avatar);
-  };
-
-  /**
-   * Функция нажатия на кнопку выбора изображения жилья
-   */
-  var onHouseImageChooser = function () {
-    var housePreview = createPreview();
-    houseImageContainer.appendChild(housePreview);
-
-    loadImage(houseImageChooser, housePreview);
-  };
-
   window.images = {
-    onAvatarChooserChange: onAvatarChooserChange,
-    onHouseImageChooser: onHouseImageChooser
+    load: load,
+    createPreview: createPreview
   };
 })();
