@@ -20,32 +20,20 @@
   var avatarChooser = advertForm.querySelector('.ad-form-header__input');
   var avatar = advertForm.querySelector('.ad-form-header__preview img');
   var houseImageChooser = advertForm.querySelector('.ad-form__input');
-  var houseImgContainer = advertForm.querySelector('.ad-form__photo');
+  var houseImageContainer = advertForm.querySelector('.ad-form__photo');
 
-  /**
-   * Функция добавления атрибута минимального значения цены в зависимости от типа жилья
-   * @param {*} evt - event
-   */
+
   var onTypeInputChange = function (evt) {
-    priceField.setAttribute('min', window.data.MinPrices[evt.target.value]);
-    priceField.setAttribute('placeholder', window.data.MinPrices[evt.target.value]);
+    priceField.setAttribute('min', window.data.MinPrice[evt.target.value]);
+    priceField.setAttribute('placeholder', window.data.MinPrice[evt.target.value]);
   };
 
-  /**
-   * Функция устанавливает пункты селекта в неактивное состояние
-   * @param {*} fields - коллекция HTML-объектов;
-   */
   var makeFieldsDisabled = function (fields) {
     fields.forEach(function (field) {
       field.disabled = true;
     });
   };
 
-  /**
-   * Функция проверки доступности вариантов выбора количества мест
-   * @param {*} options - коллекция HTML-объектов
-   * @param {*} roomIndex - ключ
-   */
   var checkRooms = function (options, roomIndex) {
     if (roomIndex === 0) {
       options[3].disabled = false;
@@ -60,38 +48,36 @@
     }
   };
 
-  /**
-   * Функция смены количества мест в зависимости от количества выбранных комнат
-   * @param {*} evt - event
-   */
-  var onRoomFieldClick = function (evt) {
+  var onRoomFieldChange = function (evt) {
     makeFieldsDisabled(capacities);
 
-    checkRooms(capacities, window.data.Rooms[evt.target.value]);
+    checkRooms(capacities, window.data.Room[evt.target.value]);
 
-    capacityField.value = window.data.Rooms[evt.target.value];
+    capacityField.value = window.data.Room[evt.target.value];
   };
 
-  /**
-   * Функция изменения поля Адрес
-   */
   var changeAddressField = function () {
     addressField.value = (mainPin.offsetLeft + Math.floor(mainPin.offsetWidth / 2)) + ', ' + (mainPin.offsetTop + mainPin.offsetHeight + window.data.PIN_ELEMENT_HEIGHT - window.data.PIN_OFFSET_Y);
   };
 
-  /**
-   * Функция нажатия на кнопку сброса формы
-   */
   var onResetFormBtnClick = function () {
-    resetPage();
+    window.page.reset();
     resetFormBtn.removeEventListener('click', onResetFormBtnClick);
   };
 
+  var onAvatarChooserChange = function () {
+    window.images.load(avatarChooser, avatar);
+  };
 
-  /**
-   * Функция активации полей формы объявления
-   */
-  var activateForm = function () {
+  var onHouseImageChooserChange = function () {
+    var housePreview = window.images.createPreview();
+    houseImageContainer.appendChild(housePreview);
+
+    window.images.load(houseImageChooser, housePreview);
+  };
+
+
+  var activate = function () {
     advertForm.querySelectorAll('fieldset').forEach(function (fieldset) {
       fieldset.disabled = false;
     });
@@ -102,48 +88,14 @@
     makeFieldsDisabled(capacities);
     checkRooms(capacities, parseInt(roomsField.value, 10));
 
-    priceField.setAttribute('placeholder', window.data.MinPrices[typeField.value]);
+    priceField.setAttribute('placeholder', window.data.MinPrice[typeField.value]);
     changeAddressField();
 
     resetFormBtn.addEventListener('click', onResetFormBtnClick);
 
-    avatarChooser.addEventListener('change', window.images.onAvatarChooserChange);
+    avatarChooser.addEventListener('change', onAvatarChooserChange);
 
-    houseImageChooser.addEventListener('change', window.images.onHouseImageChooser);
-  };
-
-  /**
-   * Функция сброса формы
-   */
-  var resetPage = function () {
-    advertForm.reset();
-    makeFieldsDisabled(formFields);
-    advertForm.classList.add('ad-form--disabled');
-
-    map.querySelectorAll('.map__pin').forEach(function (pin) {
-      if (!pin.classList.contains('map__pin--main')) {
-        pin.remove();
-      }
-    });
-    map.classList.add('map--faded');
-    mainPin.style.top = window.data.MainPinDefaultPosition.TOP;
-    mainPin.style.left = window.data.MainPinDefaultPosition.LEFT;
-    mainPin.addEventListener('mousedown', window.pin.onMainPinClick);
-    mainPin.addEventListener('keydown', window.pin.onMainPinEnterPress);
-
-    mapFilter.style.display = 'none';
-
-    avatar.src = window.data.DEFAULT_AVATAR_IMG;
-
-    if (houseImgContainer.childNodes.length) {
-      houseImgContainer.querySelectorAll(window.data.HousePreviewElement.HOUSE_ELEMENT_TYPE).forEach(function (it) {
-        houseImgContainer.removeChild(it);
-      });
-    }
-
-    avatarChooser.removeEventListener('change', window.images.onAvatarChooserChange);
-
-    houseImageChooser.removeEventListener('change', window.images.onHouseImageChooser);
+    houseImageChooser.addEventListener('change', onHouseImageChooserChange);
   };
 
   typeField.addEventListener('change', onTypeInputChange);
@@ -152,7 +104,7 @@
 
   mapFilter.style.display = 'none';
 
-  roomsField.addEventListener('mouseup', onRoomFieldClick);
+  roomsField.addEventListener('change', onRoomFieldChange);
 
   checkinField.addEventListener('change', function () {
     checkoutField.value = checkinField.value;
@@ -162,32 +114,21 @@
     checkinField.value = checkoutField.value;
   });
 
-  /**
-   * Функция показа сообщения при успешной загрузки данных с сервера
-   */
   var onSuccessLoad = function () {
+    window.page.reset();
     var successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
     var successMessage = successMessageTemplate.cloneNode(true);
     main.insertBefore(successMessage, notice);
 
-    /**
-     * Функция скрытия сообщения по нажатию мышью на свободную область
-     */
     var onEmptyAriaClick = function () {
       successMessage.remove();
-      resetPage();
       document.removeEventListener('click', onEmptyAriaClick);
       document.removeEventListener('keydown', onEscapeKeyPress);
     };
 
-    /**
-     * Функция скрытия сообщения по нажатию на клавишу Escape
-     * @param {*} evt -   event
-     */
     var onEscapeKeyPress = function (evt) {
       if (evt.key === window.data.Keys.ESC) {
         successMessage.remove();
-        resetPage();
         document.removeEventListener('keydown', onEscapeKeyPress);
         document.removeEventListener('click', onEmptyAriaClick);
       }
@@ -196,19 +137,15 @@
     document.addEventListener('keydown', onEscapeKeyPress);
   };
 
-  /**
-   * Функция показа сообщения при ошибки загрузки данных с сервера
-   */
-  var onErrorLoad = function () {
+  var onErrorLoad = function (errorText) {
     var errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorMessage = errorMessageTemplate.cloneNode(true);
+    var errorMessageText = errorMessage.querySelector('.error__message');
+    errorMessageText.innerText = errorText;
     var tryAgainBtn = errorMessage.querySelector('.error__button');
 
     main.insertBefore(errorMessage, notice);
 
-    /**
-     * Функция скрытия сообщения
-     */
     var closeErrorMessage = function () {
       errorMessage.remove();
       tryAgainBtn.removeEventListener('click', onTryAgainBtnClick);
@@ -216,23 +153,14 @@
       document.removeEventListener('click', onEmptyAriaClick);
     };
 
-    /**
-     * Функция скрытия сообщения при нажатии на кнопку "Попробовать снова"
-     */
     var onTryAgainBtnClick = function () {
       closeErrorMessage();
     };
 
-    /**
-     * Функция скрытия сообщения по нажатию на клавишу Escape
-     */
     var onEscapeKeyPress = function () {
       closeErrorMessage();
     };
 
-    /**
-     * Функция скрытия сообщения по нажатию мышью на свободную область
-     */
     var onEmptyAriaClick = function () {
       closeErrorMessage();
     };
@@ -243,12 +171,13 @@
   };
 
   advertForm.addEventListener('submit', function (evt) {
-    window.upload(new FormData(advertForm), onSuccessLoad, onErrorLoad);
+    window.backend.upload(new FormData(advertForm), onSuccessLoad, onErrorLoad);
     evt.preventDefault();
   });
 
   window.form = {
-    activateForm: activateForm,
+    activate: activate,
     changeAddressField: changeAddressField,
+    makeFieldsDisabled: makeFieldsDisabled
   };
 })();
