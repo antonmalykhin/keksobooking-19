@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var FEATURE_ELEMENT = 'li';
+
   var map = document.querySelector('.map');
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
@@ -10,26 +12,29 @@
     });
   };
 
-  /**
-   * Функция отображения окна объявления
-   * @param {object} advert - Объектов объявления
-   */
-  var renderCard = function (advert) {
-
-    var card = cardTemplate.cloneNode(true);
+  var renderFeatures = function (advert, card) {
     var featuresList = card.querySelector('.popup__features');
     var features = featuresList.querySelectorAll('.popup__feature');
-    var photosList = card.querySelector('.popup__photos');
-    var photos = photosList.querySelectorAll('.popup__photo');
-    var photoElement = photosList.querySelector('.popup__photo');
 
     var createFeatureElement = function (feature) {
-      var featureElement = document.createElement('li');
+      var featureElement = document.createElement(FEATURE_ELEMENT);
       featureElement.classList.add('popup__feature');
       featureElement.classList.add('popup__feature--' + feature);
 
       return featureElement;
     };
+
+    clearTemplate(featuresList, features);
+
+    advert.offer.features.map(createFeatureElement).forEach(function (element) {
+      featuresList.appendChild(element);
+    });
+  };
+
+  var renderPhotos = function (advert, card) {
+    var photosList = card.querySelector('.popup__photos');
+    var photos = photosList.querySelectorAll('.popup__photo');
+    var photoElement = photosList.querySelector('.popup__photo');
 
     var createPhotoElement = function (photoSrc) {
       var tempPhoto = photoElement.cloneNode();
@@ -37,10 +42,22 @@
       return tempPhoto;
     };
 
-    /**
-     * Функция скрытия карточки объявления
-     * @param {*} evt - Event
-     */
+    clearTemplate(photosList, photos);
+
+    if (advert.offer.photos) {
+      advert.offer.photos.map(createPhotoElement).forEach(function (element) {
+        photosList.appendChild(element);
+      });
+    } else {
+      card.removeChild(photosList);
+    }
+
+  };
+
+  var render = function (advert) {
+
+    var card = cardTemplate.cloneNode(true);
+
     var onCloseCardBtnClick = function (evt) {
       if (evt.target.type === 'button') {
         map.removeChild(card);
@@ -49,12 +66,8 @@
       }
     };
 
-    /**
-     * Функция скрытия карточки объявления по нажатию ESC
-     * @param {*} evt - Event
-     */
     var onEscapePress = function (evt) {
-      if (evt.key === window.data.Keys.ESC) {
+      if (evt.key === window.data.Key.ESC) {
         window.map.removeCards();
         card.removeEventListener('click', onCloseCardBtnClick);
         window.removeEventListener('keydown', onEscapePress);
@@ -70,21 +83,9 @@
     card.querySelector('.popup__text--time').innerText = 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
     card.querySelector('.popup__description').innerText = advert.offer.description;
 
-    clearTemplate(featuresList, features);
+    renderFeatures(advert, card);
 
-    advert.offer.features.map(createFeatureElement).forEach(function (element) {
-      featuresList.appendChild(element);
-    });
-
-    clearTemplate(photosList, photos);
-
-    if (advert.offer.photos) {
-      advert.offer.photos.map(createPhotoElement).forEach(function (element) {
-        photosList.appendChild(element);
-      });
-    } else {
-      card.removeChild(photosList);
-    }
+    renderPhotos(advert, card);
 
     map.insertBefore(card, map.querySelector('.map__filters-container'));
 
@@ -93,7 +94,7 @@
   };
 
   window.card = {
-    renderCard: renderCard
+    render: render
   };
 
 })();
