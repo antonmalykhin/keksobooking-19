@@ -2,20 +2,19 @@
 
 (function () {
 
-  /**
-   * Количество показываемых пинов
-   * @constant
-   * @type {number}
-   */
   var ADVERTS_NUM = 5;
 
   var map = document.querySelector('.map');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPins = map.querySelector('.map__pins');
 
-  /**
-   * Функция очистки карты от объявлений
-   */
+  var removePins = function () {
+    var shownPins = mapPins.querySelectorAll('button:not(.map__pin--main)');
+    shownPins.forEach(function (pin) {
+      mapPins.removeChild(pin);
+    });
+  };
+
   var removeCards = function () {
     var mapCards = map.querySelectorAll('.map__card');
     mapCards.forEach(function (card) {
@@ -23,23 +22,14 @@
     });
   };
 
-  /**
-   * Функция отрисовки карточки по нажатию на пин
-   * @param {*} pin - пин
-   * @param {*} advert - объявление
-   */
   var makeCard = function (pin, advert) {
     pin.addEventListener('click', function () {
       removeCards();
-      window.card.renderCard(advert);
+      window.card.render(advert);
     });
   };
 
-  /**
-   * Функция рисует маркеры объявления из массива объектов объявлений
-   * @param {*} adverts - Массив объектов объявлений
-   */
-  var renderMapPins = function (adverts) {
+  var renderPins = function (adverts) {
 
     var fragment = document.createDocumentFragment();
 
@@ -63,7 +53,8 @@
   };
 
   window.map = {
-    renderMapPins: renderMapPins,
-    removeCards: removeCards
+    renderPins: renderPins,
+    removeCards: removeCards,
+    removePins: removePins
   };
 })();
