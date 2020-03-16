@@ -26,6 +26,13 @@
     palace: 10000
   };
 
+  var HouseType = {
+    bungalo: 'Бунгало',
+    flat: 'Квартира',
+    house: 'Дом',
+    palace: 'Дворец'
+  };
+
   var Room = {
     1: 1,
     2: 2,
@@ -55,6 +62,7 @@
     Key: Key,
     PinPositionY: PinPositionY,
     MinPrice: MinPrice,
+    HouseType: HouseType,
     Room: Room,
     MainPinDefaultPosition: MainPinDefaultPosition,
     HousePreviewElement: HousePreviewElement
