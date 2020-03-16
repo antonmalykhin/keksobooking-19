@@ -63,7 +63,7 @@
 
   var onHouseFilterFieldsChange = function () {
     window.map.removeCards();
-    window.backend.load(filtrateAdverts);
+    window.backend.load(filtrateAdverts, window.backend.onErrorLoad);
     window.map.removePins();
   };
 
