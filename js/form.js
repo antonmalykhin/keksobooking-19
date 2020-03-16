@@ -40,9 +40,7 @@
     } else {
       for (var i = roomIndex; i > 0; i--) {
         options.forEach(function (capacity) {
-          if (parseInt(capacity.value, 10) === i) {
-            capacity.disabled = false;
-          }
+          capacity.disabled = parseInt(capacity.value, 10) !== i;
         });
       }
     }
@@ -81,8 +79,6 @@
     advertForm.querySelectorAll('fieldset').forEach(function (fieldset) {
       fieldset.disabled = false;
     });
-
-    mapFilter.style.display = 'flex';
 
     capacityField.value = roomsField.value;
     makeFieldsDisabled(capacities);
