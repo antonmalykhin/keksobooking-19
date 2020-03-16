@@ -11,7 +11,6 @@
   var avatar = advertForm.querySelector('.ad-form-header__preview img');
   var houseImageChooser = advertForm.querySelector('.ad-form__input');
   var houseImgContainer = advertForm.querySelector('.ad-form__photo');
-  var mapFilter = map.querySelector('.map__filters');
 
   var activate = function () {
     map.classList.remove('map--faded');
