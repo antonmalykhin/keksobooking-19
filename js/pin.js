@@ -4,23 +4,10 @@
   var map = document.querySelector('.map');
   var mainPin = map.querySelector('.map__pin--main');
 
-  var onErrorLoadPins = function (errorText) {
-    var errorMessage = document.createElement('div');
-    var errorMessageText = document.createElement('p');
-    errorMessage.classList.add('error');
-    errorMessageText.classList.add('error__message');
-    errorMessageText.innerText = errorText;
-    errorMessage.appendChild(errorMessageText);
-    document.body.appendChild(errorMessage);
-    setTimeout(function () {
-      errorMessage.remove();
-    }, 3000);
-  };
-
   var onMainPinClick = function (evt) {
     if (evt.button === window.data.LEFT_MOUSE_BUTTON) {
       window.page.activate();
-      window.backend.load(window.map.renderPins, onErrorLoadPins);
+      window.backend.load(window.map.renderPins, window.backend.onErrorLoad);
     }
   };
 
@@ -79,7 +66,7 @@
   var onMainPinEnterPress = function (evt) {
     if (evt.key === window.data.Key.ENTER) {
       window.page.activate();
-      window.backend.load(window.map.renderPins, onErrorLoadPins);
+      window.backend.load(window.map.renderPins, window.backend.onErrorLoad);
     }
   };
 
