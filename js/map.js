@@ -7,6 +7,8 @@
   var map = document.querySelector('.map');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPins = map.querySelector('.map__pins');
+  var mapFilter = map.querySelector('.map__filters');
+
 
   var removePins = function () {
     var shownPins = mapPins.querySelectorAll('button:not(.map__pin--main)');
@@ -50,6 +52,10 @@
       fragment.appendChild(pin);
     }
     mapPins.appendChild(fragment);
+
+    window.setTimeout(function () {
+      mapFilter.style.display = 'flex';
+    }, 200);
   };
 
   window.map = {
