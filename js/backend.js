@@ -28,7 +28,6 @@
   var main = document.querySelector('main');
   var notice = main.querySelector('.notice');
 
-
   var load = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
 
@@ -55,7 +54,6 @@
     xhr.open('GET', Url.LOAD);
     xhr.send();
   };
-
 
   var upload = function (data, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
