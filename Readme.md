@@ -1,8 +1,4 @@
-# Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
-
-- Студент: [Антон Малыхин](https://up.htmlacademy.ru/javascript/19/user/1074531).
-- Наставник: [Даниил Царёв](https://htmlacademy.ru/profile/id945835).
-
+# Личный проект «Кексобукинг»
 ---
 
 _Не удаляйте и не обращайте внимание на файлы:_<br>
